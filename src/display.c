@@ -6,8 +6,6 @@
 
 #include "header.h"
 
-#define MSGLINE (LINES-1)
-
 extern char_t msgline[MSGBUF];
 extern int32_t msgflag;
 extern window_t *curwin;
@@ -62,13 +60,15 @@ segment_next(buffer_t *b, int32_t start, int32_t finish) {
   return (p < b->buf_end ? scan : pos(b, b->buf_end));
 }
 
-static int32_t
-line_down(buffer_t *b, int32_t offset) {
+int32_t
+line_down(buffer_t *b, int32_t offset)
+{
   return segment_next(b, line_start(b, offset), offset);
 }
 
-static int32_t
-line_up(buffer_t *b, int32_t offset) {
+int32_t
+line_up(buffer_t *b, int32_t offset)
+{
   int32_t curr = line_start(b, offset);
   int32_t seg = segment_start(b, curr, offset);
   if (curr < seg)
@@ -90,7 +90,7 @@ modeline(window_t *w)
 	lch = (w == curwin ? '=' : '-');
 	mch = ((w->buf->flags & B_MODIFIED) ? '*' : lch);
 
-	sprintf(modeline, "%c%c mpe: %c%c %s",  lch,mch,lch,lch, w->buf->buf_name);
+	sprintf(modeline, "%c%c mpe: %c%c %s ",  lch,mch,lch,lch, w->buf->buf_name);
 	addstr(modeline);
 	for (i = strlen(modeline) + 1; i <= COLS; i++)
 		addch(lch);

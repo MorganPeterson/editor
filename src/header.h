@@ -21,6 +21,7 @@
 
 #define DEFAULT_BUFFER_SIZE 512
 #define MSGBUF 512
+#define MSGLINE (LINES-1)
 #define K_BUFFER_LENGTH 256
 #define MIN_GAP_SIZE 16
 #define FNAME_MAX 256
@@ -107,9 +108,23 @@ char_t *get_key(keymap_t *keys, keymap_t **key_return);
 int32_t move_gap(buffer_t *b, int32_t offset);
 void insert(char_t *c);
 void update_display(void);
+int32_t line_down(buffer_t *b, int32_t offset);
+int32_t line_up(buffer_t *b, int32_t offset);
 int32_t utflen(int32_t s);
 int32_t prev_utflen(void);
 int32_t display_utf(buffer_t *b, int32_t n);
 void msg(char *msg, ...);
+void left(void);
+void right(void);
+void up(void);
+void down(void);
+void delete(void);
+void backspace(void);
+void pagedown(void);
+void pageup(void);
+void savebuffer(void);
+int32_t save(char_t *fn);
+int32_t get_input(char *prompt, char_t *buf, int32_t nbuf, int32_t flag);
+void writefile(void);
 
 #endif

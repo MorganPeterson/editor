@@ -4,6 +4,56 @@
 
 #include "header.h"
 
+extern buffer_t *curbuf;
+
+int32_t
+posix_file(char_t *fn)
+{
+  if (fn[0] == '_')
+    return 0;
+  for (; *fn != '\0'; ++fn) {
+    if (!isalnum(*fn) && *fn != '.' && *fn != '_' && *fn != '-' && *fn != '/')
+      return 0;
+  }
+  return 1;
+}
+
+int32_t
+save(char_t *fn)
+{
+  FILE *fp;
+	size_t length;
+
+	if (!posix_file(fn)) {
+		msg("Not a portable POSIX file name.");
+		return 0;
+	}
+	fp = fopen((char*)fn, "w");
+	if (fp == NULL) {
+		msg("Failed to open file \"%s\".", fn);
+		return 0;
+	}
+
+	(void) move_gap(curbuf, 0);
+
+  length = (size_t)(curbuf->buf_end - curbuf->gap_end);
+
+  if (fwrite(curbuf->gap_end, sizeof(char_t), length, fp) != length) {
+		msg("Failed to write file \"%s\".", fn);
+		return 0;
+	}
+
+  if (fclose(fp) != 0) {
+		msg("Failed to close file \"%s\".", fn);
+		return 0;
+	}
+
+  curbuf->flags &= ~B_MODIFIED;
+
+  msg("File \"%s\" %ld bytes saved.", fn, pos(curbuf, curbuf->buf_end));
+	return (TRUE);
+  }
+
 char_t*
 read_file(char_t* file, int32_t *len)
 {
