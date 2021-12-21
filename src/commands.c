@@ -46,9 +46,11 @@ left(void)
 void
 right(void)
 {
-  int32_t s = utflen(*ptr(curbuf, curbuf->point));
-  while ((curbuf->point < pos(curbuf, curbuf->buf_end)) && s-- > 0)
-    ++curbuf->point;
+  if (curbuf->point < curbuf->size) {
+    int32_t s = utflen(*ptr(curbuf, curbuf->point));
+    while ((curbuf->point < pos(curbuf, curbuf->buf_end)) && s-- > 0)
+      ++curbuf->point;
+  }
 }
 
 void

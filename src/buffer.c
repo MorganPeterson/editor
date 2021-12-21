@@ -19,11 +19,10 @@ grow_gap(buffer_t *b, int32_t n) {
   int32_t blen = b->buf_end - b->buf_start;
 
   n = n < MIN_GAP_SIZE ? DEFAULT_BUFFER_SIZE : n;
-  uint64_t newlen = blen + n;
+  uint64_t newlen = blen + n * sizeof(char_t);
 
-  if (newlen > MAX_SIZE_T) {
+  if (newlen == 0 || newlen > MAX_SIZE_T)
     return 0;
-  }
 
   if (blen == 0) {
     new = (char_t*)calloc(newlen, sizeof(char_t));
@@ -35,6 +34,7 @@ grow_gap(buffer_t *b, int32_t n) {
   }
   b->data = new;
   b->buf_start = &b->data[0];
+
   b->gap_start = b->buf_start + front;
   b->buf_end = b->buf_start + blen;
   b->gap_end = b->buf_start + newlen;
