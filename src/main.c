@@ -40,6 +40,7 @@ main(int argc, char **argv) {
   init_pair(ID_SYMBOL, COLOR_WHITE, COLOR_BLACK);
   init_pair(ID_MODELINE, COLOR_BLACK, COLOR_WHITE);
 
+  TABSIZE=4;
   if (argc > 1) {
     char_t bname[BNAME_MAX];
     char_t fname[FNAME_MAX];

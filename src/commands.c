@@ -29,7 +29,7 @@ line_column(buffer_t *b, int32_t offset, int32_t col)
   int c = 0;
 	char_t *p;
 	while ((p = ptr(b, offset)) < b->buf_end && *p != '\n' && c < col) {
-		c += *p == '\t' ? 8 - (c & 7) : 1;
+		c += TABWIDTH(p,c);
 		offset += utflen(*ptr(b,offset));
 	}
 	return (offset);
@@ -76,6 +76,24 @@ void
 down(void)
 {
   curbuf->point = line_column(curbuf, line_down(curbuf, curbuf->point), curbuf->col);
+}
+
+void
+linebegin(void)
+{
+  curbuf->point = segment_start(curbuf, line_start(curbuf, curbuf->point), curbuf->point);
+}
+
+void
+lineend(void)
+{
+  /* do nothing if EOF */
+  if (curbuf->point == pos(curbuf, curbuf->buf_end))
+    return;
+  curbuf->point = line_down(curbuf, curbuf->point);
+	int32_t p = curbuf->point;
+	left();
+	curbuf->point = (*ptr(curbuf, curbuf->point) == '\n') ? curbuf->point : p;
 }
 
 void
@@ -242,4 +260,36 @@ gotoline(void)
     line = atoi(temp);
     goto_line(line);
   }
+}
+
+/* scan buffer and fill in curline and lastline */
+void
+get_line_stats(int32_t *curline, int32_t *lastline)
+{
+	int32_t endp = pos(curbuf, curbuf->buf_end);
+
+	*curline = -1;
+  	*lastline = 0;
+
+	for (int32_t p=0, line=0; p < endp; p++) {
+		line += (*(ptr(curbuf, p)) == '\n') ? 1 : 0;
+		*lastline = line;
+
+		if (*curline == -1 && p == curbuf->point) {
+			*curline = (*(ptr(curbuf, p)) == '\n') ? line : line + 1;
+		}
+	}
+
+	*lastline = *lastline + 1;
+
+	if (curbuf->point == endp)
+		*curline = *lastline;
+}
+
+void
+cursorpos(void)
+{
+  int32_t current, last;
+  get_line_stats(&current, &last);
+  msg("row %d/%d", current, last);
 }

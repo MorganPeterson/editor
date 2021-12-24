@@ -12,8 +12,9 @@ extern window_t *curwin;
 extern window_t *headwin;
 extern buffer_t *curbuf;
 
-static int32_t
-line_start(buffer_t *b, int32_t offset) {
+int32_t
+line_start(buffer_t *b, int32_t offset)
+{
   char_t *p;
   do
     p = ptr(b, --offset);
@@ -21,8 +22,9 @@ line_start(buffer_t *b, int32_t offset) {
   return (b->buf_start < p ? ++offset : 0);
 }
 
-static int32_t
-segment_start(buffer_t *b, int32_t start, int32_t finish) {
+int32_t
+segment_start(buffer_t *b, int32_t start, int32_t finish)
+{
   char_t *p;
   int32_t c = 0;
   int32_t scan = start;
@@ -37,7 +39,7 @@ segment_start(buffer_t *b, int32_t start, int32_t finish) {
       start = scan;
     }
     scan += utflen(*ptr(b, scan));
-    c += *p == '\t' ? 8 - (c & 7) : 1;
+    c += TABWIDTH(p, c);
   }
   return c < COLS ? start : finish;
 }
@@ -55,7 +57,7 @@ segment_next(buffer_t *b, int32_t start, int32_t finish) {
     scan += utflen(*ptr(b, scan));
     if (*p == '\n')
       break;
-    c += *p == '\t' ? 8 - (c & 7) : 1;
+    c += TABWIDTH(p, c);
   }
   return (p < b->buf_end ? scan : pos(b, b->buf_end));
 }
@@ -165,7 +167,7 @@ display(window_t *w, int32_t flag)
       if (nch > 1) {
         j += display_utf(b, nch);
       } else if (isprint(*p) || *p == '\t' || *p == '\n') {
-        j += *p == '\t' ? 8-(j&7) : 1;
+        j += TABWIDTH(p,j);
         display_character(p);
       } else {
         const char *ctrl = unctrl(*p);

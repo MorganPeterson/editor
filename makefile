@@ -1,6 +1,6 @@
 NAME=tvi
 CC=cc
-FLAGS+=-O2 -std=c11 -pedantic -W -Wall -g
+FLAGS+=-O2 -std=c11 -pedantic -W -Wall -s
 
 OS:=$(shell uname -s)
 ifeq ($(OS),Linux)

@@ -20,7 +20,9 @@
 #define MAX_SIZE_T ((unsigned long) (size_t) ~0)
 #define EPOS ((int32_t)-1)
 #define MIN(x,y)  ((x) < (y) ? (x) : (y))
-#define MAX(a, b)  ((a) < (b) ? (b) : (a))
+#define MAX(a, b) ((a) < (b) ? (b) : (a))
+#define TW 4
+#define TABWIDTH(p,c) (*p) == '\t' ? TW - ((c) & (TW-1)) : 1
 
 #define DEFAULT_BUFFER_SIZE 512
 #define MSGBUF 512
@@ -132,8 +134,10 @@ int32_t move_gap(buffer_t *b, int32_t offset);
 void insert(char_t *c);
 void update_display(void);
 void display_prompt_and_response(char *prompt, char *response);
+int32_t line_start(buffer_t *b, int32_t offset);
 int32_t line_down(buffer_t *b, int32_t offset);
 int32_t line_up(buffer_t *b, int32_t offset);
+int32_t segment_start(buffer_t *b, int32_t start, int32_t finish);
 int32_t utflen(int32_t s);
 int32_t prev_utflen(void);
 void display_search_result(int32_t fnd, int32_t point, int8_t dir, char *prompt, char *search);
@@ -149,6 +153,9 @@ void pagedown(void);
 void pageup(void);
 void savebuffer(void);
 void search(void);
+void linebegin(void);
+void lineend(void);
+void cursorpos(void);
 int32_t line_to_point(int32_t line);
 int32_t goto_line(int32_t line);
 void gotoline(void);

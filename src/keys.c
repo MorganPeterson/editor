@@ -7,8 +7,10 @@
 #include "header.h"
 
 keymap_t key_map[] = {
+  {"C-a beginning-of-line", "\x01", linebegin},
   {"C-b backward-char", "\x02", left},
   {"C-d delete", "\x04", delete},
+  {"C-e end-of-line", "\x05", lineend},
   {"C-f forward-char", "\x06", right},
   {"C-h backspace", "\x08", backspace},
   {"C-n next-line", "\x0E", down},
@@ -21,6 +23,7 @@ keymap_t key_map[] = {
   {"C-x C-f find-file", "\x18\x06", findfile},
   {"C-x C-s save-buffer", "\x18\x13", savebuffer},
   {"C-x C-w write-file", "\x18\x17", writefile},
+  {"C-x = curosr-position", "\x18\x3D", cursorpos},
   {"esc v backward-page", "\x1B\x76", pageup},
   {"esc g goto-line", "\x1B\x67", gotoline},
   {"del forward-delete-char", "\x1B\x5B\x33\x7E", delete}, /* Del key */
