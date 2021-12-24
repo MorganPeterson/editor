@@ -20,6 +20,8 @@ K=keys
 C=commands
 D=display
 U=utf
+R=regex
+H=search
 
 MN=$(SRCD)/$(M).c
 IU=$(SRCD)/$(I).c
@@ -30,6 +32,8 @@ KY=$(SRCD)/$(K).c
 CM=$(SRCD)/$(C).c
 DY=$(SRCD)/$(D).c
 U8=$(SRCD)/$(U).c
+RX=$(SRCD)/$(R).c
+CH=$(SRCD)/$(H).c
 
 IUO=$(OBJD)/$(I).o
 SUO=$(OBJD)/$(S).o
@@ -39,8 +43,10 @@ KYO=$(OBJD)/$(K).o
 CMO=$(OBJD)/$(C).o
 DYO=$(OBJD)/$(D).o
 U8O=$(OBJD)/$(U).o
+RXO=$(OBJD)/$(R).o
+CHO=$(OBJD)/$(H).o
 
-OBJS=$(SUO) $(IUO) $(BFO) $(WNO) $(KYO) $(CMO) $(DYO) $(U8O)
+OBJS=$(SUO) $(IUO) $(BFO) $(WNO) $(KYO) $(CMO) $(DYO) $(U8O) $(RXO) $(CHO)
 
 .PHONY:all
 all: $(OBJS) $(NAME)
@@ -68,6 +74,12 @@ $(D):$(DYO)
 
 .PHONY:$(U)
 $(U):$(U8O)
+
+.PHONY:$(R)
+$(R):$(RXO)
+
+.PHONY:$(H)
+$(H):$(CHO)
 
 .PHONY:$(NAME)
 $(NAME):$(BIND)/$(NAME)
@@ -112,6 +124,16 @@ $(U8O):$(U8)
 	@mkdir -p $(@D)
 	@$(CC) $(FLAGS) -c $(U8) -o $@
 
+$(RXO):$(RX)
+	@echo "building $(R)"
+	@mkdir -p $(@D)
+	@$(CC) $(FLAGS) -c $(RX) -o $@
+
+$(CHO):$(CH)
+	@echo "building $(H)"
+	@mkdir -p $(@D)
+	@$(CC) $(FLAGS) -c $(CH) -o $@
+
 $(BIND)/$(NAME):$(MN)
 	@echo "building $(NAME)"
 	@mkdir -p $(@D)
@@ -121,4 +143,3 @@ clean:
 	@echo "cleaning workspace"
 	@rm -rf $(BIND)
 	@rm -rf $(OBJD)
-

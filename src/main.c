@@ -1,6 +1,6 @@
 /*
  * main.c, editor, Morgan Peterson, Public Domain, 2021
- * Derived from: atto, (Public Domain, 2017 by Hugh Barney)
+ * Derived from: atto, femto (Public Domain, 2017 by Hugh Barney)
  * Derived from: Anthony's Editor January 93, (Public Domain 1991, 1993 by Anthony Howe)
  */
 
@@ -40,33 +40,31 @@ main(int argc, char **argv) {
   init_pair(ID_SYMBOL, COLOR_WHITE, COLOR_BLACK);
   init_pair(ID_MODELINE, COLOR_BLACK, COLOR_WHITE);
 
+  if (argc > 1) {
+    char_t bname[BNAME_MAX];
+    char_t fname[FNAME_MAX];
+
+    strn_cpy(fname, (char_t*)argv[1], FNAME_MAX);
+    make_buffer_name(bname, fname);
+
+    curbuf = find_buffer(bname, 1);
+
+    (void)insert_file(fname, 0);
+    strn_cpy(curbuf->file_name, fname, FNAME_MAX);
+    strn_cpy(curbuf->buf_name, bname, BNAME_MAX);
+  } else {
+    curbuf = find_buffer(scratch_name, 1);
+    strn_cpy(curbuf->buf_name, scratch_name, BNAME_MAX);
+  }
+
   headwin = curwin = new_window();
   if (headwin == NULL)
     die("window malloc failed", 1);
 
   one_window(headwin);
 
-  if (argc > 1) {
-    int32_t len = 0;
-    char_t *fname = (char_t*)argv[1];
-
-    char_t bname[BNAME_MAX];
-    make_buffer_name(bname, fname);
-    curbuf = find_buffer(bname, 1);
-
-    char_t *fc =  read_file(fname, &len);
-    if (fc != NULL) {
-      insert_string(curbuf, fc, &len);
-      strn_cpy(curbuf->file_name, fname, FNAME_MAX);
-      free(fc);
-    }
-  } else {
-    curbuf = find_buffer(scratch_name, 1);
-    strn_cpy(curbuf->file_name, scratch_name, FNAME_MAX);
-  }
-
   attach_buf_win(headwin, curbuf);
-  curbuf->point = 0;
+  beginning_of_buffer();
 
   char_t *input;
   while (!done) {
@@ -79,6 +77,7 @@ main(int argc, char **argv) {
         insert(input);
       } else {
         flushinp();
+        msg("key not bound");
       }
     }
   }

@@ -7,6 +7,7 @@
 #include "header.h"
 
 extern buffer_t *headbuf;
+extern buffer_t *curbuf;
 
 int32_t
 grow_gap(buffer_t *b, int32_t n) {
@@ -100,7 +101,8 @@ init_buffer(void) {
 }
 
 void
-make_buffer_name(char_t *bn, char_t *fn) {
+make_buffer_name(char_t *bn, char_t *fn)
+{
   char_t *p = fn;
   /* go to end of file name */
   while (*p != 0)
@@ -112,7 +114,8 @@ make_buffer_name(char_t *bn, char_t *fn) {
 }
 
 buffer_t*
-find_buffer(char_t *n, int32_t flag) {
+find_buffer(char_t *n, int32_t flag)
+{
   buffer_t *x;
   buffer_t *y;
 
@@ -125,6 +128,9 @@ find_buffer(char_t *n, int32_t flag) {
 
   if (flag) {
     x = init_buffer();
+    if (x == NULL)
+      return NULL;
+
     if (headbuf == NULL) {
       headbuf = x;
     } else if (strn_cmp(headbuf->buf_name, n, BNAME_MAX)) {
@@ -143,19 +149,64 @@ find_buffer(char_t *n, int32_t flag) {
   return x;
 }
 
+buffer_t*
+find_buffer_fname(char_t *fn)
+{
+  buffer_t *b;
+  char_t bname[BNAME_MAX];
+
+  for (b = headbuf; b != NULL; b = b->next) {
+    if (strn_cmp(fn, b->file_name, FNAME_MAX) == 0)
+      return b;
+  }
+  make_buffer_name(bname, fn);
+  b = find_buffer(bname, 1);
+  return b;
+}
+
 void
-insert_string(buffer_t *b, char_t *s, int32_t *len) {
-  (void)grow_gap(b, *len);
-  int32_t p = pos(b, b->gap_start);
+insert_string(buffer_t *b, char_t *s, int32_t len, int32_t flag)
+{
+  if (len < b->gap_end - b->gap_start || grow_gap(b, len)) {
+    b->point = move_gap(b, b->point);
+    memcpy(b->gap_start, s, len * sizeof(char_t));
+    b->gap_start += len;
+    b->point += len;
+    b->flags &= (flag ? B_MODIFIED : ~B_MODIFIED);
+    b->reframe = 1;
+  }
+}
 
-  b->point = move_gap(b, b->point);
-  b->gap_start += *len;
-  strn_cpy(b->data + p, s, *len);
-
+int32_t
+insert_file(char_t *fn, int32_t flag)
+{
+  int32_t len = 0;
+  char_t *fc = read_file(fn, &len);
+  if (fc != NULL) {
+    insert_string(curbuf, fc, len, flag);
+    free(fc);
+  } else {
+    return 0;
+  }
+  return 1;
 }
 
 void
 attach_buf_win(window_t *w, buffer_t *b) {
   w->buf = b;
+}
+
+static void
+zero_buffer(buffer_t *b)
+{
+  b->gap_start = b->buf_start;
+  b->gap_end = b->buf_end;
+  b->point = 0;
+}
+
+void
+clear_buffer(void) {
+  zero_buffer(curbuf);
+  beginning_of_buffer();
 }
 

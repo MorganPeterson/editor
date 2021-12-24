@@ -10,6 +10,19 @@
 extern buffer_t *curbuf;
 extern window_t *curwin;
 
+void
+beginning_of_buffer(void)
+{
+  curbuf->point = 0;
+}
+
+void
+end_of_buffer(void) {
+  curbuf->point = pos(curbuf, curbuf->buf_end);
+  if (curbuf->page_end < pos(curbuf, curbuf->buf_end))
+    curbuf->reframe = 1;
+}
+
 static int32_t
 line_column(buffer_t *b, int32_t offset, int32_t col)
 {
@@ -110,9 +123,10 @@ void
 writefile(void)
 {
   char_t temp[FNAME_MAX];
+  temp[0] = '\0';
 
 	strn_cpy(temp, curbuf->file_name, FNAME_MAX);
-	if (get_input("Write file: ", temp, FNAME_MAX, 0))
+	if (get_input("write-file: ", temp, FNAME_MAX, 0))
 		if (save(temp) != 0)
 			strn_cpy(curbuf->file_name, temp, FNAME_MAX);
 }
@@ -127,4 +141,88 @@ savebuffer(void)
     writefile();
   }
   refresh();
+}
+
+void
+insertfile(void)
+{
+  char_t temp[FNAME_MAX];
+  temp[0] = '\0';
+  if (get_input("insert-file: ", temp, FNAME_MAX, 1))
+    (void)insert_file(temp, 1);
+}
+
+void
+findfile(void)
+{
+  char_t fname[FNAME_MAX];
+  fname[0] = '\0';
+
+  if (get_input("find-file: ", fname, FNAME_MAX, 1)) {
+    buffer_t *b = find_buffer_fname(fname);
+
+    disassociate_buffer(curwin);
+
+    curbuf = b;
+
+    associate_buffer_to_win(curbuf, curwin);
+
+    clear_buffer();
+    (void)insert_file(fname, 0);
+
+    strn_cpy(curbuf->file_name, fname, FNAME_MAX);
+  }
+}
+
+void
+search(void) {
+  int32_t cpos = 0;
+  int32_t c, found;
+  int32_t old_point = curbuf->point;
+  char temp[K_BUFFER_LENGTH];
+  filerange_t match[1];
+  match[0].start = old_point;
+  match[0].end = old_point;
+  temp[0] = '\0';
+  display_prompt_and_response("search: ", temp);
+  cpos = strlen(temp);
+
+  for(;;) {
+    c = getch();
+    /* ignore control keys other than C-g, backspace, CR,  C-s, C-R, ESC */
+		if (c < 32 && c != 07 && c != 0x08 && c != 0x13 && c != 0x12 && c != 0x1b)
+			continue;
+
+    switch (c) {
+      case 0x1B: /* esc */
+        temp[cpos] = '\0';
+        flushinp(); /* discard without printing to screen */
+        return;
+      case 0x07: /* ctrl-g */
+        curbuf->point = old_point;
+        return;
+      case 0x13: /* ctrl-s search forward */
+        found = search_forward(temp, match, 1);
+        display_search_result(found, match[0].start, FWD_SEARCH, "search: ", temp);
+        break;
+      case 0x12: /* ctrl-r search backward */
+        found = search_backward(temp, match, 1);
+        display_search_result(found, match[0].start, BWD_SEARCH, "search: ", temp);
+        break;
+      case 0x7F: /* fallthrough - del, erase */
+      case 0x08: /* backspace */
+        if (cpos == 0)
+          continue;
+        temp[--cpos] = '\0';
+        display_prompt_and_response("search: ", temp);
+        break;
+      default:
+        if (cpos < K_BUFFER_LENGTH - 1) {
+          temp[cpos++] = c;
+          temp[cpos] = '\0';
+          display_prompt_and_response("search: ", temp);
+        }
+        break;
+    }
+  }
 }

@@ -13,19 +13,23 @@ keymap_t key_map[] = {
   {"C-h backspace", "\x08", backspace},
   {"C-n next-line", "\x0E", down},
   {"C-p previous-line", "\x10", up},
+  {"C-r search-backward", "\x12", search},
+  {"C-s search-forward", "\x13", search},
   {"C-v forward-page", "\x16", pagedown},
+  {"C-x i insert-file", "\x18\x69", insertfile},
   {"C-x C-c exit", "\x18\x03", quit},
+  {"C-x C-f find-file", "\x18\x06", findfile},
   {"C-x C-s save-buffer", "\x18\x13", savebuffer},
   {"C-x C-w write-file", "\x18\x17", writefile},
   {"esc v backward-page", "\x1B\x76", pageup},
   {"del forward-delete-char", "\x1B\x5B\x33\x7E", delete}, /* Del key */
-	{"backspace delete-left", "\x7f", backspace},
-	{"up previous-line", "\x1B\x5B\x41", up},
-	{"down next-line", "\x1B\x5B\x42", down},
-	{"left backward-character", "\x1B\x5B\x44", left},
-	{"right forward-character", "\x1B\x5B\x43", right},
-	{"pgdn forward-page", "\x1B\x5B\x36\x7E", pagedown}, /* PgDn key */
-  {"pgup backward-page", "\x1B\x5B\x35\x7E", pageup}, /* PgUp key */
+  {"backspace delete-left", "\x7f", backspace},            /* backspace key */
+  {"up previous-line", "\x1B\x5B\x41", up},                /* up arrow */
+  {"down next-line", "\x1B\x5B\x42", down},                /* down arrow */
+  {"left backward-character", "\x1B\x5B\x44", left},       /* left arrow */
+  {"right forward-character", "\x1B\x5B\x43", right},      /* right arrow */
+  {"pgdn forward-page", "\x1B\x5B\x36\x7E", pagedown},     /* PgDn key */
+  {"pgup backward-page", "\x1B\x5B\x35\x7E", pageup},      /* PgUp key */
   {NULL, NULL, NULL},
 };
 
@@ -82,8 +86,7 @@ get_input(char *prompt, char_t *buf, int32_t nbuf, int32_t flag)
 	int32_t c;
 	int32_t start_col = strlen(prompt);
 
-	mvaddstr(MSGLINE, 0, prompt);
-	clrtoeol();
+  display_prompt_and_response(prompt, (char*)buf);
 
 	if (flag == 1) buf[0] = '\0';
 

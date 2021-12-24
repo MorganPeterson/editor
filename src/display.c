@@ -108,13 +108,23 @@ display_message(void)
   clrtoeol();
 }
 
+void
+display_prompt_and_response(char *prompt, char *response)
+{
+  mvaddstr(MSGLINE, 0, prompt);
+  if (response[0] != '\0')
+    addstr((char*)response);
+  clrtoeol();
+}
+
 static void
 display_character(char_t *p) {
   addch(*p);
 }
 
 static void
-display(window_t *w, int32_t flag) {
+display(window_t *w, int32_t flag)
+{
   buffer_t *b = w->buf;
   int32_t i, j, nch;
   char_t *p;
@@ -214,3 +224,18 @@ msg(char *msg, ...)
   va_end(args);
   msgflag = 1;
 }
+
+void
+display_search_result(int32_t fnd, int32_t point, int8_t dir, char *prompt, char *search)
+{
+  if (fnd == 0) {
+    curwin->buf->point = point;
+    msg("%s/%s", prompt, search);
+    display(curwin, 1);
+  } else {
+    msg("Failing %s%s", prompt, search);
+    display_message();
+    curwin->buf->point = dir == FWD_SEARCH ? 0 : pos(curwin->buf, curwin->buf->buf_end);
+  }
+}
+

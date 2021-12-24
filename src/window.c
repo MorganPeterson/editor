@@ -59,3 +59,15 @@ win_to_buffer(window_t *w)
 		w->buf->page_end += (w->buf->size - w->buf->psize);
 	}
 }
+
+void
+disassociate_buffer(window_t *w)
+{
+  w->buf = NULL;
+}
+
+void
+associate_buffer_to_win(buffer_t *b, window_t *w)
+{
+  w->buf = b;
+}

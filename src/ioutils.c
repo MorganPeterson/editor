@@ -52,25 +52,31 @@ save(char_t *fn)
 
   msg("File \"%s\" %ld bytes saved.", fn, pos(curbuf, curbuf->buf_end));
 	return (TRUE);
-  }
+}
 
 char_t*
 read_file(char_t* file, int32_t *len)
 {
+	struct stat st;
+
+  if (stat((char*)file, &st) < 0)
+    return NULL;
+
+  if (MAX_SIZE_T < st.st_size)
+    return NULL;
+
 	FILE* f = fopen((char*)file, "rb");
 
 	if (!f) {
 		return NULL;
 	}
 
-	struct stat st;
-
   if (fstat(fileno(f), &st) != 0) {
 		fclose(f);
 		return NULL;
 	}
 
-	char_t *data = (char_t*)malloc(st.st_size *sizeof(char_t));
+	char_t *data = (char_t*)malloc(st.st_size * sizeof(char_t));
 
 	if (!data) {
 		fclose(f);
