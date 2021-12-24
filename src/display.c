@@ -201,7 +201,6 @@ display(window_t *w, int32_t flag)
 void
 update_display(void)
 {
-  window_t *w;
   buffer_t *b;
 
   b = curwin->buf;

@@ -22,6 +22,7 @@ keymap_t key_map[] = {
   {"C-x C-s save-buffer", "\x18\x13", savebuffer},
   {"C-x C-w write-file", "\x18\x17", writefile},
   {"esc v backward-page", "\x1B\x76", pageup},
+  {"esc g goto-line", "\x1B\x67", gotoline},
   {"del forward-delete-char", "\x1B\x5B\x33\x7E", delete}, /* Del key */
   {"backspace delete-left", "\x7f", backspace},            /* backspace key */
   {"up previous-line", "\x1B\x5B\x41", up},                /* up arrow */

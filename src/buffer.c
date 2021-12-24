@@ -210,3 +210,32 @@ clear_buffer(void) {
   beginning_of_buffer();
 }
 
+int32_t
+line_to_point(int32_t line)
+{
+  int32_t endp = pos(curbuf, curbuf->buf_end);
+
+  for (int32_t p=0, start=0; p < endp; p++) {
+    if (*(ptr(curbuf, p)) == '\n') {
+      if (--line == 0)
+        return start;
+      if (p + 1 < endp)
+        start = p + 1;
+    }
+  }
+  return -1;
+}
+
+int32_t
+goto_line(int32_t line)
+{
+  int32_t p = line_to_point(line);
+  if (p != -1) {
+    curbuf->point = p;
+    msg("line %d", line);
+    return 1;
+  }
+  msg("line %d not found", line);
+  return 0;
+}
+

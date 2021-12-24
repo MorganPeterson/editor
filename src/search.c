@@ -2,17 +2,6 @@
 
 extern buffer_t *curbuf;
 
-static char*
-alloc_buf(int32_t len)
-{
-  char *buf = calloc(1,  len);
-	if (!buf)
-		return NULL;
-  memcpy(buf, curbuf->gap_end, len);
-  buf[len] = '\0';
-  return buf;
-}
-
 int32_t
 search_forward(const char *str, filerange_t pmatch[], size_t mrange)
 {

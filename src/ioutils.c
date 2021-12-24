@@ -62,7 +62,7 @@ read_file(char_t* file, int32_t *len)
   if (stat((char*)file, &st) < 0)
     return NULL;
 
-  if (MAX_SIZE_T < st.st_size)
+  if (MAX_SIZE_T < (size_t)st.st_size)
     return NULL;
 
 	FILE* f = fopen((char*)file, "rb");

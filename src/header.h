@@ -18,7 +18,7 @@
 #include <regex.h>
 
 #define MAX_SIZE_T ((unsigned long) (size_t) ~0)
-#define EPOS ((size_t)-1)
+#define EPOS ((int32_t)-1)
 #define MIN(x,y)  ((x) < (y) ? (x) : (y))
 #define MAX(a, b)  ((a) < (b) ? (b) : (a))
 
@@ -149,6 +149,9 @@ void pagedown(void);
 void pageup(void);
 void savebuffer(void);
 void search(void);
+int32_t line_to_point(int32_t line);
+int32_t goto_line(int32_t line);
+void gotoline(void);
 int32_t save(char_t *fn);
 int32_t get_input(char *prompt, char_t *buf, int32_t nbuf, int32_t flag);
 void writefile(void);

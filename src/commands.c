@@ -156,6 +156,8 @@ void
 findfile(void)
 {
   char_t fname[FNAME_MAX];
+  char_t bname[BNAME_MAX];
+
   fname[0] = '\0';
 
   if (get_input("find-file: ", fname, FNAME_MAX, 1)) {
@@ -169,8 +171,11 @@ findfile(void)
 
     clear_buffer();
     (void)insert_file(fname, 0);
+    beginning_of_buffer();
 
+    make_buffer_name(bname, fname);
     strn_cpy(curbuf->file_name, fname, FNAME_MAX);
+    strn_cpy(curbuf->buf_name, bname, BNAME_MAX);
   }
 }
 
@@ -224,5 +229,17 @@ search(void) {
         }
         break;
     }
+  }
+}
+
+void
+gotoline(void)
+{
+  int32_t line;
+  char temp[BNAME_MAX];
+  temp[0] = '\0';
+  if (get_input("goto-line: ", (char_t*)temp, BNAME_MAX, 1)) {
+    line = atoi(temp);
+    goto_line(line);
   }
 }
