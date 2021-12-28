@@ -94,6 +94,7 @@ init_buffer(void) {
   b->reframe = 0;
   b->row = 0;
   b->col = 0;
+  b->cnt = 0;
   b->flags = 0x00;
   b->undo = 0;
   b->redo = 0;
@@ -104,6 +105,21 @@ init_buffer(void) {
     return NULL;
   memset(b->data, 0, DEFAULT_BUFFER_SIZE);
   return b;
+}
+
+void
+free_buffers(void)
+{
+  buffer_t *head = headbuf;
+  buffer_t *next;
+
+  while (head != NULL) {
+    next = head->next;
+    free_undos(head->undo);
+    free(head->data);
+    free(head);
+    head = next;
+  }
 }
 
 void
@@ -175,7 +191,8 @@ insert_string(buffer_t *b, char_t *s, int32_t len, int32_t flag)
 {
   if (len < b->gap_end - b->gap_start || grow_gap(b, len)) {
     b->point = move_gap(b, b->point);
-		add_undo(curbuf, UNDO_YANK, curbuf->point, s, NULL);
+    if (flag)
+		  add_undo(curbuf, UNDO_YANK, curbuf->point, s, NULL);
     memcpy(b->gap_start, s, len * sizeof(char_t));
     b->gap_start += len;
     b->point += len;
@@ -187,20 +204,15 @@ insert_string(buffer_t *b, char_t *s, int32_t len, int32_t flag)
 int32_t
 insert_file(char_t *fn, int32_t flag)
 {
+  char_t *fc = NULL;
   int32_t len = 0;
-  char_t *fc = read_file(fn, &len);
-  if (fc != NULL) {
-    insert_string(curbuf, fc, len, flag);
-    free(fc);
-  } else {
+  fc = read_file(fn, &len);
+  if (fc == NULL)
     return 0;
-  }
-  return 1;
-}
 
-void
-attach_buf_win(window_t *w, buffer_t *b) {
-  w->buf = b;
+  insert_string(curbuf, fc, len, flag);
+  free(fc);
+  return 1;
 }
 
 static void
@@ -317,3 +329,31 @@ copy_cut(int32_t cut)
 	}
 }
 
+int32_t
+count_buffers(void)
+{
+	buffer_t* b;
+	int i;
+
+	for (i=0, b=headbuf; b != NULL; b = b->next)
+		i++;
+
+	return i;
+}
+
+int32_t
+delete_buffer(buffer_t *b)
+{
+  buffer_t *s;
+  if (b == headbuf) {
+    headbuf = b->next;
+  } else {
+    for (s=headbuf; s->next!=b && s->next!=NULL; s=s->next)
+      ;
+    s->next = b->next;
+  }
+  free_undos(b->undo);
+  free(b->data);
+  free(b);
+  return 1;
+}

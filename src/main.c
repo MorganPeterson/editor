@@ -37,12 +37,13 @@ main(int argc, char **argv) {
   noecho();
   idlok(stdscr, 1);
 
+  TABSIZE=4;
+
   start_color();
   init_pair(ID_DEFAULT, COLOR_CYAN, COLOR_BLACK);
   init_pair(ID_SYMBOL, COLOR_WHITE, COLOR_BLACK);
   init_pair(ID_MODELINE, COLOR_BLACK, COLOR_WHITE);
 
-  TABSIZE=4;
   if (argc > 1) {
     char_t bname[BNAME_MAX];
     char_t fname[FNAME_MAX];
@@ -65,8 +66,8 @@ main(int argc, char **argv) {
     die("window malloc failed", 1);
 
   one_window(headwin);
+  associate_buffer_to_win(curbuf, headwin);
 
-  attach_buf_win(headwin, curbuf);
   beginning_of_buffer();
 
   char_t *input;
@@ -96,44 +97,20 @@ term_signal(int32_t n) {
     case SIGSEGV:
       die("SIGSEGV", n);
       break;
-    case SIGINT:   /* fallthrough */
-    case SIGTSTP:  /* fallthrough */
-    case SIGWINCH: /* fallthrough */
-      break;
     default:
       die("UNKNOWN", n);
   }
 }
 
 void
-free_windows(void) {
-  window_t *w;
-  w = headwin;
-  while (w != NULL) {
-    headwin = w->next;
-    free_undos(w->buf->undo);
-    free(w->buf->data);
-    free(w->buf);
-    free(w);
-    w = headwin;
-  }
-}
-
-void
 die(const char *s, int32_t code) {
-  switch (code) {
-    case 0:
-    case 1:
-    case 2: /* fallthrough */
-    default:
-      free_windows();
-      if (curscr != NULL) {
-		    move(LINES-1, 0);
-		    refresh();
-		    noraw();
-		    endwin();
-      }
-      break;
+  free_buffers();
+  free_windows();
+  if (curscr != NULL) {
+    move(LINES-1, 0);
+    refresh();
+    noraw();
+    endwin();
   }
   perror(s);
   done = 1;

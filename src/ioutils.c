@@ -58,6 +58,7 @@ char_t*
 read_file(char_t* file, int32_t *len)
 {
 	struct stat st;
+  char_t *data = NULL;
 
   if (stat((char*)file, &st) < 0)
     return NULL;
@@ -76,7 +77,7 @@ read_file(char_t* file, int32_t *len)
 		return NULL;
 	}
 
-	char_t *data = (char_t*)malloc(st.st_size * sizeof(char_t));
+	data = (char_t*)malloc(st.st_size * sizeof(char_t));
 
 	if (!data) {
 		fclose(f);

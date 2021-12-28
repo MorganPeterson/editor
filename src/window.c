@@ -7,6 +7,7 @@
 #include "header.h"
 
 extern window_t *headwin;
+extern window_t *curwin;
 
 window_t*
 new_window(void)
@@ -28,10 +29,23 @@ new_window(void)
 }
 
 void
+free_windows(void)
+{
+  window_t *head = headwin;
+  window_t *next;
+  while (head != NULL) {
+    next = head->next;
+    free(head);
+    head = next;
+  }
+}
+
+void
 one_window(window_t *w)
 {
   w->top = 0;
   w->rows = LINES-2;
+  w->next = NULL;
 }
 
 void
@@ -72,6 +86,7 @@ void
 associate_buffer_to_win(buffer_t *b, window_t *w)
 {
   w->buf = b;
+  b->cnt++;
 }
 
 void
@@ -81,3 +96,52 @@ mark_all_windows(void)
   for (w=headwin; w!=NULL; w=w->next)
     w->update = 1;
 }
+
+window_t*
+split_current_window(void)
+{
+  window_t *wp, *wp2;
+	int32_t ntru, ntrl;
+
+	if (curwin->rows < 3) {
+		msg("Cannot split a %d line window", curwin->rows);
+		return NULL;
+	}
+
+	wp = new_window();
+	associate_buffer_to_win(curwin->buf, wp);
+	buf_to_win(wp); /* inherit buffer settings */
+
+	ntru = (curwin->rows - 1) / 2; /* Upper size */
+	ntrl = (curwin->rows - 1) - ntru; /* Lower size */
+
+	/* Old is upper window */
+	curwin->rows = ntru;
+	wp->top = curwin->top + ntru + 1;
+	wp->rows = ntrl;
+
+	/* insert it in the list */
+	wp2 = curwin->next;
+	curwin->next = wp;
+	wp->next = wp2;
+  clear();
+  mark_all_windows();
+	update_display(); /* mark the lot for update */
+	return curwin;
+}
+
+void
+free_other_windows(window_t *w)
+{
+  window_t *wp, *next;
+  for (wp=next=headwin; next != NULL; wp=next) {
+    next = wp->next;
+    if (wp != w) {
+      disassociate_buffer(wp);
+      free(wp);
+    }
+  }
+  headwin = curwin = w;
+  one_window(w);
+}
+

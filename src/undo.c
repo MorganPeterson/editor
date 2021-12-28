@@ -54,7 +54,7 @@ free_undos(undo_t *up)
     if (prev->str != NULL)
       free(prev->str);
     u = prev;
-    prev = prev->prev;
+    prev = u->prev;
     free(u);
   }
 }
@@ -62,7 +62,7 @@ free_undos(undo_t *up)
 void
 add_undo(buffer_t *b, undotype_t type, int32_t p, char_t *s, char_t *r)
 {
-  int len = 1;
+  int32_t len = 1;
 
 	len = strlen((char *)s);
 

@@ -7,10 +7,29 @@
 
 #include "header.h"
 
+extern buffer_t *headbuf;
 extern buffer_t *curbuf;
+extern window_t *headwin;
 extern window_t *curwin;
 extern char_t *scrap;
 extern int32_t nscrap;
+extern char_t *scratch_name;
+
+char *str_yes = "y\b";
+char *str_no = "n\b";
+
+static
+int32_t yesno(int32_t flag)
+{
+	int32_t ch;
+
+	addstr(flag ? str_yes : str_no);
+	refresh();
+	ch = getch();
+	if (ch == '\r' || ch == '\n')
+		return (flag);
+	return (tolower(ch) == str_yes[1]);
+}
 
 void
 beginning_of_buffer(void)
@@ -373,3 +392,55 @@ yank(void)
 {
   insert_string(curbuf, scrap, nscrap, 1);
 }
+
+void
+nextbuffer(void) {
+  disassociate_buffer(curwin);
+  curbuf = curbuf->next != NULL ? curbuf->next : headbuf;
+  associate_buffer_to_win(curbuf, curwin);
+}
+
+void
+killbuffer(void) {
+  buffer_t *killbuf = curbuf;
+  int32_t bcount = count_buffers();
+
+  /* don't do anything if only the scratch buffer is left */
+  if (bcount == 1 && 0 == strn_cmp(curbuf->buf_name, scratch_name, BNAME_MAX))
+    return;
+
+  if (!(curbuf->flags & B_SPECIAL) && curbuf->flags & B_MODIFIED) {
+    mvaddstr(MSGLINE, 0, "buffer is not saved");
+    clrtoeol();
+    if (!yesno(0))
+      return;
+  }
+
+  if (bcount == 1)
+    (void)find_buffer(scratch_name, 1);
+
+  nextbuffer();
+  delete_buffer(killbuf);
+}
+
+void
+splitwindow(void) {
+  (void)split_current_window();
+}
+
+void
+otherwindow(void) {
+  curwin->update = 1;
+  curwin = (curwin->next == NULL ? headwin : curwin->next);
+  curbuf = curwin->buf;
+  if (curbuf->cnt > 1)
+    win_to_buffer(curwin);
+}
+
+void
+deleteotherwindows(void){
+  if (headwin->next == NULL)
+    return;
+  free_other_windows(curwin);
+}
+

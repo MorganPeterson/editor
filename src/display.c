@@ -145,8 +145,7 @@ display(window_t *w, int32_t flag)
     }
 
     while (0 < i--)
-      // b->page_start = line_up(b, b->page_start);
-      b->page_start = 0;
+      b->page_start = line_up(b, b->page_start);
   }
 
   move(w->top, 0);
@@ -204,6 +203,7 @@ display(window_t *w, int32_t flag)
 void
 update_display(void)
 {
+  window_t *w;
   buffer_t *b;
 
   b = curwin->buf;
@@ -215,6 +215,21 @@ update_display(void)
     b->psize = b->size;
     return;
   }
+
+  display(curwin, 0);
+
+  for (w=headwin; w!=NULL; w=w->next) {
+    if (w != curwin && (w->buf == b || w->update)) {
+      win_to_buffer(w);
+      display(w, 0);
+    }
+  }
+
+  win_to_buffer(curwin);
+  display_message();
+  move(curwin->row, curwin->col);
+  refresh();
+  b->psize = b->size;
 }
 
 void

@@ -40,8 +40,9 @@
 #define BWD_SEARCH 2
 
 typedef enum {
-	B_MODIFIED = 0x01,
-	B_OVERWRITE = 0x02, /* overwite mode */
+  B_MODIFIED = 0x01,
+  B_OVERWRITE = 0x02, /* overwite mode */
+  B_SPECIAL = 0x04,   /* is a buffer of the name of *name* */
 } buffer_flags_t;
 
 typedef enum {
@@ -101,6 +102,7 @@ struct buffer_t {
   int32_t row;
   int32_t col;
   int32_t mark;
+  int32_t cnt;
   buffer_flags_t flags;
   undo_t *undo;              /* undo "stack" */
   undo_t *redo;              /* redo "stack" */
@@ -153,7 +155,6 @@ buffer_t *find_buffer(char_t *n, int32_t flag);
 void insert_string(buffer_t *w, char_t * s, int32_t len, int32_t flag);
 void make_buffer_name(char_t *bn, char_t *fn);
 void one_window(window_t *w);
-void attach_buf_win(window_t *w, buffer_t *b);
 void free_windows(void);
 char_t *get_key(keymap_t *keys, keymap_t **key_return);
 int32_t move_gap(buffer_t *b, int32_t offset);
@@ -190,6 +191,11 @@ void undocmd(void);
 void setmark(void);
 void killregion(void);
 void copyregion(void);
+void nextbuffer(void);
+void killbuffer(void);
+void splitwindow(void);
+void otherwindow(void);
+void deleteotherwindows(void);
 void yank(void);
 int32_t line_to_point(int32_t line);
 int32_t goto_line(int32_t line);
@@ -207,8 +213,10 @@ buffer_t *find_buffer_fname(char_t *fn);
 void disassociate_buffer(window_t *w);
 void associate_buffer_to_win(buffer_t *b, window_t *w);
 void buffer_init(strbuf_t *b);
+int32_t delete_buffer(buffer_t *b);
 int8_t buffer_append(strbuf_t *b, const char *c, size_t len);
 int8_t buffer_terminate(strbuf_t *b);
+int32_t count_buffers(void);
 void buffer_release(strbuf_t *b);
 char *buffer_move(strbuf_t *b);
 Regex* parse_regex(const char **s);
@@ -217,8 +225,12 @@ int32_t search_forward(const char *str, filerange_t pmatch[], size_t mrange);
 int32_t search_backward(const char *str, filerange_t pmatch[], size_t mrange);
 undo_t *execute_undo(undo_t *u, char_t *input);
 int32_t get_undo_again(char_t *input);
+void free_buffers(void);
+void free_windows(void);
 void free_undos(undo_t *up);
 void add_undo(buffer_t *b, undotype_t type, int32_t p, char_t *s, char_t *r);
 void mark_all_windows(void);
 void add_mode(buffer_t *, buffer_flags_t);
+window_t *split_current_window(void);
+void free_other_windows(window_t *curwin);
 #endif
