@@ -126,3 +126,50 @@ strn_cpy(void *s1, void *s2, int32_t n) {
   *(--target) = '\0';
 }
 
+char_t*
+str_dup(const char_t *org)
+{
+    int org_size;
+    static char_t *dup;
+    char_t *dup_offset;
+
+    /* Allocate memory for duplicate */
+    org_size = strlen((char*)org);
+    dup = (char_t *)malloc(sizeof(char_t)*org_size+1);
+    if( dup == NULL)
+        return( (char_t *)NULL);
+
+    /* Copy string */
+    dup_offset = dup;
+    while(*org)
+    {
+        *dup_offset = *org;
+        dup_offset++;
+        org++;
+    }
+    *dup_offset = '\0';
+
+    return dup;
+}
+
+char_t*
+strn_cat(char_t *s1, char_t *s2, uint32_t n)
+{
+  if((s1 == NULL) && (s2 == NULL))
+    return NULL;
+  char_t *dest = s1;
+  /* find the end of destination */
+  while(*dest != '\0')
+  {
+    dest++;
+  }
+  while (n--)
+  {
+    if (!(*dest++ = *s2++))
+    {
+      return s1;
+    }
+  }
+  *dest = '\0';
+  return s1;
+}

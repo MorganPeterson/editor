@@ -17,6 +17,8 @@ char_t msgline[MSGBUF];
 int32_t msgflag;
 char_t *scratch_name = (char_t*)"*scratch*";
 keymap_t *key_return;
+char_t *scrap;
+int32_t nscrap;
 
 int32_t
 main(int argc, char **argv) {
@@ -109,6 +111,7 @@ free_windows(void) {
   w = headwin;
   while (w != NULL) {
     headwin = w->next;
+    free_undos(w->buf->undo);
     free(w->buf->data);
     free(w->buf);
     free(w);

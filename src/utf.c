@@ -48,6 +48,17 @@ prev_utflen(void) {
 }
 
 int32_t
+prev_utflen_n(char_t *b, int32_t pos)
+{
+  for (int32_t n=1; n < 4; n++) {
+    if (-1 < pos - n &&  utflen(b[pos-n]) == n + 1) {
+      return n + 1;
+    }
+  }
+  return 1;
+}
+
+int32_t
 display_utf(buffer_t *b, int32_t n) {
   int32_t i;
   char buf[UTFmax];

@@ -23,7 +23,7 @@
 #define MAX(a, b) ((a) < (b) ? (b) : (a))
 #define TW 4
 #define TABWIDTH(p,c) (*p) == '\t' ? TW - ((c) & (TW-1)) : 1
-
+#define NOMARK -1
 #define DEFAULT_BUFFER_SIZE 512
 #define MSGBUF 512
 #define MSGLINE (LINES-1)
@@ -44,6 +44,17 @@ typedef enum {
 	B_OVERWRITE = 0x02, /* overwite mode */
 } buffer_flags_t;
 
+typedef enum {
+  UNDO_INSERT,
+  UNDO_BACKSPACE,
+  UNDO_DELETE,
+  UNDO_INSAT,
+  UNDO_REPLACE,
+  UNDO_KILL,
+  UNDO_YANK,
+  UNDO_NONE
+} undotype_t;
+
 typedef unsigned char char_t;
 
 typedef struct buffer_t buffer_t;
@@ -52,10 +63,19 @@ typedef struct window_t window_t;
 typedef struct keymap_t keymap_t;
 typedef struct Regex Regex;
 typedef struct filerange_t filerange_t;
+typedef struct undo_t undo_t;
 
 struct filerange_t {
 	size_t start;  /**< Absolute byte position. */
 	size_t end;    /**< Absolute byte position. */
+};
+
+struct undo_t {
+  undo_t *prev;
+  int32_t point;
+  char_t *str;
+  char_t *rep;
+  char_t type;
 };
 
 struct Regex {
@@ -80,7 +100,11 @@ struct buffer_t {
   int32_t reframe;
   int32_t row;
   int32_t col;
+  int32_t mark;
   buffer_flags_t flags;
+  undo_t *undo;              /* undo "stack" */
+  undo_t *redo;              /* redo "stack" */
+  int32_t undo_cnt;          /* how many undos left */
 };
 
 struct strbuf_t {
@@ -122,7 +146,9 @@ char_t *ptr(buffer_t *b, register int32_t offset);
 buffer_t *init_buffer(void);
 char_t *read_file(char_t* file, int32_t *len);
 void strn_cpy(void *s1, void *s2, int32_t n);
+char_t *str_dup(const char_t *src);
 int32_t strn_cmp(const char_t *s1, const char_t *s2, int32_t n);
+char_t *strn_cat(char_t *s1, char_t *s2, uint32_t n);
 buffer_t *find_buffer(char_t *n, int32_t flag);
 void insert_string(buffer_t *w, char_t * s, int32_t len, int32_t flag);
 void make_buffer_name(char_t *bn, char_t *fn);
@@ -140,9 +166,13 @@ int32_t line_up(buffer_t *b, int32_t offset);
 int32_t segment_start(buffer_t *b, int32_t start, int32_t finish);
 int32_t utflen(int32_t s);
 int32_t prev_utflen(void);
+int32_t prev_utflen_n(char_t *b, int32_t pos);
 void display_search_result(int32_t fnd, int32_t point, int8_t dir, char *prompt, char *search);
 int32_t display_utf(buffer_t *b, int32_t n);
 void msg(char *msg, ...);
+void set_mark(void);
+int32_t check_region(void);
+void copy_cut(int32_t cut);
 void left(void);
 void right(void);
 void up(void);
@@ -156,6 +186,11 @@ void search(void);
 void linebegin(void);
 void lineend(void);
 void cursorpos(void);
+void undocmd(void);
+void setmark(void);
+void killregion(void);
+void copyregion(void);
+void yank(void);
 int32_t line_to_point(int32_t line);
 int32_t goto_line(int32_t line);
 void gotoline(void);
@@ -180,5 +215,10 @@ Regex* parse_regex(const char **s);
 void regex_free(Regex *r);
 int32_t search_forward(const char *str, filerange_t pmatch[], size_t mrange);
 int32_t search_backward(const char *str, filerange_t pmatch[], size_t mrange);
-
+undo_t *execute_undo(undo_t *u, char_t *input);
+int32_t get_undo_again(char_t *input);
+void free_undos(undo_t *up);
+void add_undo(buffer_t *b, undotype_t type, int32_t p, char_t *s, char_t *r);
+void mark_all_windows(void);
+void add_mode(buffer_t *, buffer_flags_t);
 #endif

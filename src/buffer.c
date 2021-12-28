@@ -8,6 +8,8 @@
 
 extern buffer_t *headbuf;
 extern buffer_t *curbuf;
+extern char_t *scrap;
+extern int32_t nscrap;
 
 int32_t
 grow_gap(buffer_t *b, int32_t n) {
@@ -93,6 +95,10 @@ init_buffer(void) {
   b->row = 0;
   b->col = 0;
   b->flags = 0x00;
+  b->undo = 0;
+  b->redo = 0;
+  b->undo_cnt = -1;
+  b->mark = NOMARK;
 
   if (!grow_gap(b, DEFAULT_BUFFER_SIZE))
     return NULL;
@@ -169,6 +175,7 @@ insert_string(buffer_t *b, char_t *s, int32_t len, int32_t flag)
 {
   if (len < b->gap_end - b->gap_start || grow_gap(b, len)) {
     b->point = move_gap(b, b->point);
+		add_undo(curbuf, UNDO_YANK, curbuf->point, s, NULL);
     memcpy(b->gap_start, s, len * sizeof(char_t));
     b->gap_start += len;
     b->point += len;
@@ -237,5 +244,76 @@ goto_line(int32_t line)
   }
   msg("line %d not found", line);
   return 0;
+}
+
+void
+add_mode(buffer_t *b, buffer_flags_t f)
+{
+  b->flags = f;
+}
+
+void
+set_mark(void)
+{
+  curbuf->mark = (curbuf->mark == curbuf->point ? NOMARK : curbuf->point);
+}
+
+int32_t
+check_region(void)
+{
+  if (curbuf->mark == NOMARK) {
+    msg("no mark");
+    return 0;
+  }
+
+  if (curbuf->point == curbuf->mark) {
+    msg("no region selected");
+    return 0;
+  }
+  return 1;
+}
+
+void
+copy_cut(int32_t cut)
+{
+	char_t *p;
+	/* if no mark or point == marker, nothing doing */
+	if (curbuf->mark == NOMARK || curbuf->point == curbuf->mark)
+		return;
+	if (scrap != NULL) {
+		free(scrap);
+		scrap = NULL;
+	}
+
+	if (curbuf->point < curbuf->mark) {
+		/* point above mark: move gap under point, region = mark - point */
+		(void) move_gap(curbuf, curbuf->point);
+		/* moving the gap can impact the pointer so sure get the pointer after the move */
+		p = ptr(curbuf, curbuf->point);
+		nscrap = curbuf->mark - curbuf->point;
+	} else {
+		/* if point below mark: move gap under mark, region = point - mark */
+		(void) move_gap(curbuf, curbuf->mark);
+		/* moving the gap can impact the pointer so sure get the pointer after the move */
+		p = ptr(curbuf, curbuf->mark);
+		nscrap = curbuf->point - curbuf->mark;
+	}
+	if ((scrap = (char_t*) malloc(nscrap + 1)) == NULL) {
+		msg("no more memory available");
+	} else {
+		(void) memcpy(scrap, p, nscrap * sizeof (char_t));
+		*(scrap + nscrap) = '\0';  /* null terminate for insert_string */
+		if (cut) {
+			//debug("CUT: pt=%ld nscrap=%d\n", curbuf->point, nscrap);
+			add_undo(curbuf, UNDO_KILL, (curbuf->point < curbuf->mark ? curbuf->point : curbuf->mark), scrap, NULL);
+			curbuf->gap_end += nscrap; /* if cut expand gap down */
+			curbuf->point = pos(curbuf, curbuf->gap_end); /* set point to after region */
+			add_mode(curbuf, B_MODIFIED);
+			msg("%ld bytes cut", nscrap);
+		} else {
+			msg("%ld bytes copied", nscrap);
+		}
+    curbuf->mark = NOMARK;
+	}
 }
 

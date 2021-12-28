@@ -16,9 +16,9 @@ int32_t
 line_start(buffer_t *b, int32_t offset)
 {
   char_t *p;
-  do
+  do {
     p = ptr(b, --offset);
-  while (b->buf_start < p && *p != '\n');
+  } while (b->buf_start < p && *p != '\n');
   return (b->buf_start < p ? ++offset : 0);
 }
 
@@ -145,7 +145,8 @@ display(window_t *w, int32_t flag)
     }
 
     while (0 < i--)
-      b->page_start = line_up(b, b->page_start);
+      // b->page_start = line_up(b, b->page_start);
+      b->page_start = 0;
   }
 
   move(w->top, 0);

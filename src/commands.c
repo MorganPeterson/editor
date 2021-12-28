@@ -9,6 +9,8 @@
 
 extern buffer_t *curbuf;
 extern window_t *curwin;
+extern char_t *scrap;
+extern int32_t nscrap;
 
 void
 beginning_of_buffer(void)
@@ -38,7 +40,6 @@ line_column(buffer_t *b, int32_t offset, int32_t col)
 void
 insert(char_t *c)
 {
-  /* char plus null */
   if (curbuf->gap_start == curbuf->gap_end && !grow_gap(curbuf, 1))
     return;
 
@@ -46,6 +47,7 @@ insert(char_t *c)
   *curbuf->gap_start = *c;
   curbuf->gap_start++;
   curbuf->point++;
+  add_undo(curbuf, UNDO_INSERT, curbuf->point, c, NULL);
 }
 
 void
@@ -99,22 +101,40 @@ lineend(void)
 void
 delete(void)
 {
+  char_t the_char[7]; /* the deleted char, allow 6 unsigned chars plus a null */
 	curbuf->point = move_gap(curbuf, curbuf->point);
+
 	if (curbuf->gap_end < curbuf->buf_end) {
-		curbuf->gap_end += utflen(*curbuf->gap_end);
+	  int32_t n = utflen(*curbuf->gap_end);
+		/* record the deleted chars in the undo structure */
+		memcpy(the_char, curbuf->gap_end, n);
+		the_char[n] = '\0'; /* null terminate, the deleted char(s) */
+		curbuf->gap_end += n;
 		curbuf->point = pos(curbuf, curbuf->gap_end);
-		curbuf->flags |= B_MODIFIED;
+		add_mode(curbuf, B_MODIFIED);
+		add_undo(curbuf, UNDO_DELETE, curbuf->point, the_char, NULL);
 	}
 }
 
 void
 backspace(void)
 {
+  char_t the_char[7]; /* the deleted char, allow 6 unsigned chars plus a null */
+	int n = prev_utflen();
+
 	curbuf->point = move_gap(curbuf, curbuf->point);
-	if (curbuf->buf_start < curbuf->gap_start) {
-		curbuf->gap_start -= prev_utflen();
-		curbuf->flags |= B_MODIFIED;
+
+	if (curbuf->buf_start < (curbuf->gap_start - (n - 1)) ) {
+		curbuf->gap_start -= n; /* increase start of gap by size of char */
+		add_mode(curbuf, B_MODIFIED);
+
+		/* record the backspaced chars in the undo structure */
+		memcpy(the_char, curbuf->gap_start, n);
+		the_char[n] = '\0'; /* null terminate, the backspaced char(s) */
+		curbuf->point = pos(curbuf, curbuf->gap_end);
+		add_undo(curbuf, UNDO_BACKSPACE, curbuf->point, the_char, NULL);
 	}
+
 	curbuf->point = pos(curbuf, curbuf->gap_end);
 }
 
@@ -292,4 +312,64 @@ cursorpos(void)
   int32_t current, last;
   get_line_stats(&current, &last);
   msg("row %d/%d", current, last);
+}
+
+void
+undocmd(void)
+{
+  int32_t continue_undo = 1;
+	undo_t *up = curbuf->undo;
+	curbuf->undo_cnt = -1;
+	char_t *input = NULL;
+
+	if (up == NULL) {
+		msg("no undo recorded for this buffer");
+		return;
+	}
+
+	while (continue_undo) {
+		up = execute_undo(up, input);
+
+		update_display();
+		if (up == NULL) {
+			msg("out of undo");
+			curbuf->undo_cnt = -1;
+			return;
+		}
+		continue_undo = get_undo_again(input);
+	}
+
+  if (input != NULL)
+    free(input);
+
+	curbuf->undo_cnt = -1;
+}
+
+void
+setmark(void)
+{
+  set_mark();
+  msg("mark set to point %d", curbuf->mark);
+}
+
+void
+killregion(void)
+{
+  if (check_region() == 0)
+    return;
+  copy_cut(1);
+}
+
+void
+copyregion(void)
+{
+  if (check_region() == 0)
+    return;
+  copy_cut(0);
+}
+
+void
+yank(void)
+{
+  insert_string(curbuf, scrap, nscrap, 1);
 }

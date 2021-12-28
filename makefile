@@ -1,6 +1,6 @@
 NAME=tvi
-CC=cc
-FLAGS+=-O2 -std=c11 -pedantic -W -Wall -s
+CC=gcc
+FLAGS+=-O2 -std=c11 -pedantic -W -Wall -g
 
 OS:=$(shell uname -s)
 ifeq ($(OS),Linux)
@@ -22,6 +22,7 @@ D=display
 U=utf
 R=regex
 H=search
+N=undo
 
 MN=$(SRCD)/$(M).c
 IU=$(SRCD)/$(I).c
@@ -34,6 +35,7 @@ DY=$(SRCD)/$(D).c
 U8=$(SRCD)/$(U).c
 RX=$(SRCD)/$(R).c
 CH=$(SRCD)/$(H).c
+UN=$(SRCD)/$(N).c
 
 IUO=$(OBJD)/$(I).o
 SUO=$(OBJD)/$(S).o
@@ -45,43 +47,24 @@ DYO=$(OBJD)/$(D).o
 U8O=$(OBJD)/$(U).o
 RXO=$(OBJD)/$(R).o
 CHO=$(OBJD)/$(H).o
+UNO=$(OBJD)/$(N).o
 
-OBJS=$(SUO) $(IUO) $(BFO) $(WNO) $(KYO) $(CMO) $(DYO) $(U8O) $(RXO) $(CHO)
+OBJS=$(SUO) $(IUO) $(BFO) $(WNO) $(KYO) $(CMO) $(DYO) $(U8O) $(RXO) $(CHO) $(UNO)
 
-.PHONY:all
+.PHONY:all $(I) $(S) $(B) $(W) $(K) $(C) $(D) $(U) $(R) $(H) $(N) $(NAME)
+
 all: $(OBJS) $(NAME)
-
-.PHONY:$(I)
 $(I):$(IUO)
-
-.PHONY:$(S)
 $(S):$(SUO)
-
-.PHONY:$(B)
 $(B):$(BFO)
-
-.PHONY:$(W)
 $(W):$(WNO)
-
-.PHONY:$(K)
 $(K):$(KYO)
-
-.PHONY:$(C)
 $(C):$(CMO)
-
-.PHONY:$(D)
 $(D):$(DYO)
-
-.PHONY:$(U)
 $(U):$(U8O)
-
-.PHONY:$(R)
 $(R):$(RXO)
-
-.PHONY:$(H)
 $(H):$(CHO)
-
-.PHONY:$(NAME)
+$(N):$(UNO)
 $(NAME):$(BIND)/$(NAME)
 
 $(IUO):$(IU)
@@ -133,6 +116,11 @@ $(CHO):$(CH)
 	@echo "building $(H)"
 	@mkdir -p $(@D)
 	@$(CC) $(FLAGS) -c $(CH) -o $@
+
+$(UNO):$(UN)
+	@echo "building $(N)"
+	@mkdir -p $(@D)
+	@$(CC) $(FLAGS) -c $(UN) -o $@
 
 $(BIND)/$(NAME):$(MN)
 	@echo "building $(NAME)"

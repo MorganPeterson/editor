@@ -6,6 +6,8 @@
 
 #include "header.h"
 
+extern window_t *headwin;
+
 window_t*
 new_window(void)
 {
@@ -70,4 +72,12 @@ void
 associate_buffer_to_win(buffer_t *b, window_t *w)
 {
   w->buf = b;
+}
+
+void
+mark_all_windows(void)
+{
+  window_t *w;
+  for (w=headwin; w!=NULL; w=w->next)
+    w->update = 1;
 }
