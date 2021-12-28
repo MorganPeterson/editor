@@ -13,6 +13,7 @@ keymap_t key_map[] = {
   {"C-e end-of-line", "\x05", lineend},
   {"C-f forward-char", "\x06", right},
   {"C-h backspace", "\x08", backspace},
+  {"C-k kill-to-eol", "\x0B", killtoeol},
   {"C-n next-line", "\x0E", down},
   {"C-p previous-line", "\x10", up},
   {"C-r search-backward", "\x12", search},

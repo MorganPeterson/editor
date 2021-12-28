@@ -179,6 +179,7 @@ void right(void);
 void up(void);
 void down(void);
 void delete(void);
+void killtoeol(void);
 void backspace(void);
 void pagedown(void);
 void pageup(void);

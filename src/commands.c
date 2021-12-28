@@ -136,6 +136,21 @@ delete(void)
 }
 
 void
+killtoeol(void)
+{
+  if (curbuf->point == pos(curbuf, curbuf->buf_end))
+    return;
+  if (*(ptr(curbuf, curbuf->point)) == 0xA) {
+    delete();
+  } else {
+    curbuf->mark = curbuf->point;
+    lineend();
+    if (curbuf->mark != curbuf->point)
+      copy_cut(1);
+  }
+}
+
+void
 backspace(void)
 {
   char_t the_char[7]; /* the deleted char, allow 6 unsigned chars plus a null */
