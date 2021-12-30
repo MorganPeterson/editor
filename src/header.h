@@ -32,9 +32,23 @@
 #define FNAME_MAX 256
 #define BNAME_MAX 16
 
-#define ID_DEFAULT 1
-#define ID_SYMBOL 2
-#define ID_MODELINE 3
+enum {
+  HL_HIGHLIGHT_NUMBERS = 1 << 0,
+  HL_HIGHLIGHT_STRINGS = 1 << 1,
+};
+
+enum {
+  HL_NORMAL = 1,
+  HL_SYMBOL,
+  HL_COMMENT,
+  HL_MLCOMMENT,
+  HL_KEYWORD,
+  HL_SINGLE_QUOTE,
+  HL_DOUBLE_QUOTE,
+  HL_NUMBER,
+  HL_MATCH,
+  HL_MODELINE,
+};
 
 #define FWD_SEARCH 1
 #define BWD_SEARCH 2
@@ -65,6 +79,17 @@ typedef struct keymap_t keymap_t;
 typedef struct Regex Regex;
 typedef struct filerange_t filerange_t;
 typedef struct undo_t undo_t;
+typedef struct syntax_t syntax_t;
+
+struct syntax_t {
+  char *filetype;
+  char **filematch;
+  char **keywords;
+  char *singleline_comment_start;
+  char *multiline_comment_start;
+  char *multiline_comment_end;
+  int32_t flags;
+};
 
 struct filerange_t {
 	size_t start;  /**< Absolute byte position. */
@@ -92,6 +117,7 @@ struct buffer_t {
   char_t *buf_end;
   char_t file_name[FNAME_MAX];
   char_t buf_name[BNAME_MAX];
+  syntax_t *syntax;
   int32_t point;
   int32_t cpoint;
   int32_t size;                 /* size of text minus gap */
@@ -148,6 +174,8 @@ char_t *ptr(buffer_t *b, register int32_t offset);
 buffer_t *init_buffer(void);
 char_t *read_file(char_t* file, int32_t *len);
 void strn_cpy(void *s1, void *s2, int32_t n);
+int32_t str_len(const char_t *s);
+int32_t str_str(const char_t *haystack, const char_t *needle);
 char_t *str_dup(const char_t *src);
 int32_t strn_cmp(const char_t *s1, const char_t *s2, int32_t n);
 char_t *strn_cat(char_t *s1, char_t *s2, uint32_t n);
@@ -234,4 +262,8 @@ void mark_all_windows(void);
 void add_mode(buffer_t *, buffer_flags_t);
 window_t *split_current_window(void);
 void free_other_windows(window_t *curwin);
+void free_syntax(syntax_t *s);
+void select_syntax(buffer_t *b);
+void set_parse_state(buffer_t * b, int32_t p);
+int32_t parse_text(buffer_t *b, int32_t p);
 #endif

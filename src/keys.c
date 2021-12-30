@@ -126,15 +126,15 @@ get_input(char *prompt, char_t *buf, int32_t nbuf, int32_t flag)
 			continue;
 
 		switch(c) {
-		case 0x0a: /* cr, lf */
-		case 0x0d:
+		case 0x0A: /* cr, lf */
+		case 0x0D:
 			buf[cpos] = '\0';
 			return (cpos > 0 ? TRUE : FALSE);
 
 		case 0x07: /* ctrl-g */
 			return FALSE;
 
-		case 0x7f: /* del, erase */
+		case 0x7F: /* del, erase */
 		case 0x08: /* backspace */
 			if (cpos == 0)
 				continue;

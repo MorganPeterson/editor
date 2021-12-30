@@ -87,7 +87,7 @@ modeline(window_t *w)
 	char lch, mch;
 	static char modeline[256];
 
-  attron(COLOR_PAIR(ID_MODELINE));
+  attron(COLOR_PAIR(HL_MODELINE));
 	move(w->top + w->rows, 0);
 	lch = (w == curwin ? '=' : '-');
 	mch = ((w->buf->flags & B_MODIFIED) ? '*' : lch);
@@ -96,7 +96,7 @@ modeline(window_t *w)
 	addstr(modeline);
 	for (i = strlen(modeline) + 1; i <= COLS; i++)
 		addch(lch);
-  attron(COLOR_PAIR(ID_SYMBOL));
+  attron(COLOR_PAIR(HL_NORMAL));
 }
 
 static void
@@ -120,7 +120,9 @@ display_prompt_and_response(char *prompt, char *response)
 }
 
 static void
-display_character(char_t *p) {
+display_character(buffer_t *b, char_t *p) {
+  int32_t token_type = parse_text(b, b->page_end);
+	attron(COLOR_PAIR(token_type));
   addch(*p);
 }
 
@@ -152,6 +154,7 @@ display(window_t *w, int32_t flag)
   i = w->top;
   j = 0;
   b->page_end = b->page_start;
+  set_parse_state(b, b->page_end);
 
   while (1) {
     if (b->point == b->page_end) {
@@ -168,7 +171,7 @@ display(window_t *w, int32_t flag)
         j += display_utf(b, nch);
       } else if (isprint(*p) || *p == '\t' || *p == '\n') {
         j += TABWIDTH(p,j);
-        display_character(p);
+        display_character(b, p);
       } else {
         const char *ctrl = unctrl(*p);
         j += (int32_t)strlen(ctrl);

@@ -96,6 +96,18 @@ buffer_move(strbuf_t *b)
 }
 
 int32_t
+str_len(const char_t *s)
+{
+    int32_t count = 0;
+    while(*s!='\0')
+    {
+        count++;
+        s++;
+    }
+    return count;
+}
+
+int32_t
 strn_cmp(const char_t *s1, const char_t *s2, int32_t n) {
   int32_t i = 0;
   while (s1[i] == s2[i]) {
@@ -137,7 +149,7 @@ str_dup(const char_t *org)
   char_t *dup_offset;
 
   /* Allocate memory for duplicate */
-  org_size = strlen((char*)org);
+  org_size = str_len(org);
   dup = (char_t *)malloc(sizeof(char_t)*org_size+1);
   if( dup == NULL)
     return( (char_t *)NULL);
@@ -175,4 +187,29 @@ strn_cat(char_t *s1, char_t *s2, uint32_t n)
   }
   *dest = '\0';
   return s1;
+}
+
+int32_t
+str_str(const char_t *haystack, const char_t *needle)
+{
+    int32_t nTemp = 0;
+    int32_t nStrLen = str_len(haystack);
+    int32_t nStrSubLen = str_len(needle);
+    for(int i=0; i<nStrLen-nStrSubLen; i++)
+    {
+        nTemp = i;
+        for(int j=0; j<nStrSubLen; j++)
+        {
+
+            if(haystack[nTemp]==needle[j])
+            {
+                if(j==nStrSubLen-1)
+                    return 1;
+                nTemp++;
+            }
+            else
+                break;
+        }
+    }
+    return 0;
 }

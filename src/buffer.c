@@ -85,6 +85,7 @@ init_buffer(void) {
   b->gap_end = 0;
   b->file_name[0] = '\0';
   b->buf_name[0] = '\0';
+  b->syntax = NULL;
   b->point = 0;
   b->cpoint = 0;
   b->psize = 0;
@@ -212,6 +213,7 @@ insert_file(char_t *fn, int32_t flag)
 
   insert_string(curbuf, fc, len, flag);
   free(fc);
+
   return 1;
 }
 

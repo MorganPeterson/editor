@@ -40,9 +40,15 @@ main(int argc, char **argv) {
   TABSIZE=4;
 
   start_color();
-  init_pair(ID_DEFAULT, COLOR_CYAN, COLOR_BLACK);
-  init_pair(ID_SYMBOL, COLOR_WHITE, COLOR_BLACK);
-  init_pair(ID_MODELINE, COLOR_BLACK, COLOR_WHITE);
+  init_pair(HL_NORMAL, COLOR_WHITE, COLOR_BLACK);
+  init_pair(HL_SYMBOL, COLOR_BLUE, COLOR_BLACK);
+  init_pair(HL_NUMBER, COLOR_GREEN, COLOR_BLACK);
+  init_pair(HL_DOUBLE_QUOTE, COLOR_YELLOW, COLOR_BLACK);
+  init_pair(HL_SINGLE_QUOTE, COLOR_RED, COLOR_BLACK);
+  init_pair(HL_MLCOMMENT, COLOR_CYAN, COLOR_BLACK);
+  init_pair(HL_COMMENT, COLOR_CYAN, COLOR_BLACK);
+  init_pair(HL_MODELINE, COLOR_BLACK, COLOR_WHITE);
+  init_pair(HL_KEYWORD, COLOR_MAGENTA, COLOR_BLACK);
 
   if (argc > 1) {
     char_t bname[BNAME_MAX];
@@ -56,6 +62,7 @@ main(int argc, char **argv) {
     (void)insert_file(fname, 0);
     strn_cpy(curbuf->file_name, fname, FNAME_MAX);
     strn_cpy(curbuf->buf_name, bname, BNAME_MAX);
+    select_syntax(curbuf);
   } else {
     curbuf = find_buffer(scratch_name, 1);
     strn_cpy(curbuf->buf_name, scratch_name, BNAME_MAX);
@@ -119,15 +126,15 @@ die(const char *s, int32_t code) {
 
 void
 fatal(char *msg) {
-	if (curscr != NULL) {
-		move(LINES-1, 0);
-		refresh();
-		noraw();
-		endwin();
-		putchar('\n');
-	}
-	fprintf(stderr, msg, "editor");
-	exit(1);
+  if (curscr != NULL) {
+    move(LINES-1, 0);
+	refresh();
+	noraw();
+	endwin();
+	putchar('\n');
+  }
+  fprintf(stderr, msg, "editor");
+  exit(1);
 }
 
 void

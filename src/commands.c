@@ -198,9 +198,12 @@ writefile(void)
   temp[0] = '\0';
 
 	strn_cpy(temp, curbuf->file_name, FNAME_MAX);
-	if (get_input("write-file: ", temp, FNAME_MAX, 0))
-		if (save(temp) != 0)
+	if (get_input("write-file: ", temp, FNAME_MAX, 0)) {
+		if (save(temp) != 0) {
 			strn_cpy(curbuf->file_name, temp, FNAME_MAX);
+      select_syntax(curbuf);
+    }
+  }
 }
 
 void
@@ -244,10 +247,10 @@ findfile(void)
     clear_buffer();
     (void)insert_file(fname, 0);
     beginning_of_buffer();
-
     make_buffer_name(bname, fname);
     strn_cpy(curbuf->file_name, fname, FNAME_MAX);
     strn_cpy(curbuf->buf_name, bname, BNAME_MAX);
+    select_syntax(curbuf);
   }
 }
 

@@ -23,6 +23,7 @@ U=utf
 R=regex
 H=search
 N=undo
+X=syntax
 
 MN=$(SRCD)/$(M).c
 IU=$(SRCD)/$(I).c
@@ -36,6 +37,7 @@ U8=$(SRCD)/$(U).c
 RX=$(SRCD)/$(R).c
 CH=$(SRCD)/$(H).c
 UN=$(SRCD)/$(N).c
+SY=$(SRCD)/$(X).c
 
 IUO=$(OBJD)/$(I).o
 SUO=$(OBJD)/$(S).o
@@ -48,10 +50,11 @@ U8O=$(OBJD)/$(U).o
 RXO=$(OBJD)/$(R).o
 CHO=$(OBJD)/$(H).o
 UNO=$(OBJD)/$(N).o
+SYO=$(OBJD)/$(X).o
 
-OBJS=$(SUO) $(IUO) $(BFO) $(WNO) $(KYO) $(CMO) $(DYO) $(U8O) $(RXO) $(CHO) $(UNO)
+OBJS=$(SUO) $(IUO) $(BFO) $(WNO) $(KYO) $(CMO) $(DYO) $(U8O) $(RXO) $(CHO) $(UNO) $(SYO)
 
-.PHONY:all $(I) $(S) $(B) $(W) $(K) $(C) $(D) $(U) $(R) $(H) $(N) $(NAME)
+.PHONY:all $(I) $(S) $(B) $(W) $(K) $(C) $(D) $(U) $(R) $(H) $(N) $(X) $(NAME)
 
 all: $(OBJS) $(NAME)
 $(I):$(IUO)
@@ -65,6 +68,7 @@ $(U):$(U8O)
 $(R):$(RXO)
 $(H):$(CHO)
 $(N):$(UNO)
+$(X):$(SYO)
 $(NAME):$(BIND)/$(NAME)
 
 $(IUO):$(IU)
@@ -121,6 +125,11 @@ $(UNO):$(UN)
 	@echo "building $(N)"
 	@mkdir -p $(@D)
 	@$(CC) $(FLAGS) -c $(UN) -o $@
+
+$(SYO):$(SY)
+	@echo "building $(X)"
+	@mkdir -p $(@D)
+	@$(CC) $(FLAGS) -c $(SY) -o $@
 
 $(BIND)/$(NAME):$(MN)
 	@echo "building $(NAME)"
