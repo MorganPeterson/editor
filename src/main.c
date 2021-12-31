@@ -40,15 +40,18 @@ main(int argc, char **argv) {
   TABSIZE=4;
 
   start_color();
-  init_pair(HL_NORMAL, COLOR_WHITE, COLOR_BLACK);
-  init_pair(HL_SYMBOL, COLOR_BLUE, COLOR_BLACK);
-  init_pair(HL_NUMBER, COLOR_GREEN, COLOR_BLACK);
-  init_pair(HL_DOUBLE_QUOTE, COLOR_YELLOW, COLOR_BLACK);
-  init_pair(HL_SINGLE_QUOTE, COLOR_RED, COLOR_BLACK);
-  init_pair(HL_MLCOMMENT, COLOR_CYAN, COLOR_BLACK);
-  init_pair(HL_COMMENT, COLOR_CYAN, COLOR_BLACK);
-  init_pair(HL_MODELINE, COLOR_BLACK, COLOR_WHITE);
-  init_pair(HL_KEYWORD, COLOR_MAGENTA, COLOR_BLACK);
+  init_pair(HL_BACKGROUND, 31, 255);
+  init_pair(HL_NORMAL, 238, 255);
+  init_pair(HL_SYMBOL, 25, 255);
+  init_pair(HL_NUMBER, 166, 255);
+  init_pair(HL_DOUBLE_QUOTE, 64, 255);
+  init_pair(HL_SINGLE_QUOTE, 28, 255);
+  init_pair(HL_MLCOMMENT, 102, 255);
+  init_pair(HL_COMMENT, 102, 255);
+  init_pair(HL_MODELINE, 24, 252);
+  init_pair(HL_KEYWORD, 162, 255);
+
+  bkgd(COLOR_PAIR(HL_BACKGROUND));
 
   if (argc > 1) {
     char_t bname[BNAME_MAX];
@@ -92,7 +95,7 @@ main(int argc, char **argv) {
       }
     }
   }
-  quit();
+  die("QUIT", 0);
 }
 
 void
@@ -135,9 +138,4 @@ fatal(char *msg) {
   }
   fprintf(stderr, msg, "editor");
   exit(1);
-}
-
-void
-quit(void) {
-  die("QUIT", 0);
 }

@@ -48,6 +48,8 @@ enum {
   HL_NUMBER,
   HL_MATCH,
   HL_MODELINE,
+  HL_BACKGROUND,
+  HL_FOREGROUND,
 };
 
 #define FWD_SEARCH 1
@@ -163,6 +165,7 @@ struct keymap_t {
 void term_signal(int32_t n);
 void die(const char *s, int32_t code);
 void quit(void);
+int32_t modified_buffers(void);
 void fatal(char *msg);
 window_t *new_window(void);
 void buf_to_win(window_t *w);

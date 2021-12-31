@@ -28,7 +28,24 @@ int32_t yesno(int32_t flag)
 	ch = getch();
 	if (ch == '\r' || ch == '\n')
 		return (flag);
-	return (tolower(ch) == str_yes[1]);
+	return (tolower(ch) == str_yes[0]);
+}
+
+static void
+quit_ask(void)
+{
+  if (modified_buffers() > 0) {
+    mvaddstr(MSGLINE, 0, "unsaved changes; quit? ");
+    clrtoeol();
+    if (!yesno(0))
+      return;
+  }
+  die("QUIT", 0);
+}
+
+void
+quit(void) {
+  quit_ask();
 }
 
 void
@@ -66,6 +83,7 @@ insert(char_t *c)
   *curbuf->gap_start = *c;
   curbuf->gap_start++;
   curbuf->point++;
+  curbuf->flags = B_MODIFIED;
   add_undo(curbuf, UNDO_INSERT, curbuf->point, c, NULL);
 }
 

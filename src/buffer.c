@@ -359,3 +359,14 @@ delete_buffer(buffer_t *b)
   free(b);
   return 1;
 }
+
+int32_t
+modified_buffers(void)
+{
+  for (buffer_t *b = headbuf; b != NULL; b = b->next) {
+    if (!(b->flags & B_SPECIAL) && (b->flags & B_MODIFIED))
+      return 1;
+  }
+  return 0;
+}
+

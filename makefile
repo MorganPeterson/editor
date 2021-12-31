@@ -1,6 +1,6 @@
 NAME=tvi
 CC=gcc
-FLAGS+=-O2 -std=c11 -pedantic -W -Wall -s
+FLAGS+=-O2 -std=c11 -pedantic -W -Wall -g
 
 OS:=$(shell uname -s)
 ifeq ($(OS),Linux)
@@ -140,3 +140,7 @@ clean:
 	@echo "cleaning workspace"
 	@rm -rf $(BIND)
 	@rm -rf $(OBJD)
+
+install:
+	@echo "installing editor"
+	@cp bin/tvi /usr/local/bin/tvi
