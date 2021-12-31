@@ -231,20 +231,24 @@ set_parse_state(buffer_t * b, int32_t p)
 void
 select_syntax(buffer_t *b)
 {
-  int32_t j, is_ext;
-  b->syntax = NULL;
-  if (b->file_name == NULL)
-    return;
-  char *ext = strchr((char*)b->file_name, '.');
-  for (unsigned int i=0; i < HLDB_ENTRIES; i++) {
-    syntax_t *s = &HLDB[i];
-    j = 0;
-    while (s->filematch[j++]) {
-      is_ext = s->filematch[i][0] == '.';
-      if ((is_ext && ext && !strcmp(ext, s->filematch[i])) ||
-          (!is_ext && str_str(b->file_name, (char_t*)s->filematch[i])))
-        b->syntax = s;
-      return;
-    }
-  }
+	int32_t j, is_ext;
+  	b->syntax = NULL;
+  	if (b->file_name == NULL)
+    	return;
+
+  	char *ext = strchr((char*)b->file_name, '.');
+
+  	for (unsigned int i=0; i < HLDB_ENTRIES; i++) {
+    	syntax_t *s = &HLDB[i];
+    	j = 0;
+    	while (s->filematch[j]) {
+      		is_ext = s->filematch[i][0] == '.';	
+      		if ((is_ext && ext && !strcmp(ext, s->filematch[j])) ||
+				(!is_ext && strstr((char*)b->file_name, s->filematch[j]))) {
+        		b->syntax = s;
+      			return;
+			}
+			j++;
+    	}
+  	}
 }

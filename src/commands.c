@@ -212,16 +212,16 @@ pageup(void)
 void
 writefile(void)
 {
-  char_t temp[FNAME_MAX];
-  temp[0] = '\0';
+ 	char_t temp[FNAME_MAX];
+  	temp[0] = '\0';
 
 	strn_cpy(temp, curbuf->file_name, FNAME_MAX);
 	if (get_input("write-file: ", temp, FNAME_MAX, 0)) {
 		if (save(temp) != 0) {
 			strn_cpy(curbuf->file_name, temp, FNAME_MAX);
-      select_syntax(curbuf);
-    }
-  }
+      	select_syntax(curbuf);
+    	}
+  	}
 }
 
 void
