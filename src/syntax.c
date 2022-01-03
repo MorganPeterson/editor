@@ -1,3 +1,7 @@
+/*
+ * syntax.c, editor, Morgan Peterson, Public Domain, 2021
+ */
+
 #include "header.h"
 
 #define HLDB_ENTRIES (sizeof(HLDB) / sizeof(HLDB[0]))

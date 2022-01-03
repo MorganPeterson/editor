@@ -1,3 +1,7 @@
+/*
+ * themes.c, editor, Morgan Peterson, Public Domain, 2021
+ */
+
 #include "header.h"
 
 enum {
