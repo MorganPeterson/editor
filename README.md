@@ -2,6 +2,12 @@
 
 Morgan Peterson's Editor
 
+## Derivation
+
+MPE is based on the public domain code of Anthony Howe's editor (commonly known as Anthony's Editor or AE) and Hugh Barney's Atto/Femto.  Rather than representing a file as a linked list of lines, the AE Editor uses the concept of a Buffer-Gap.  A Buffer-Gap editor stores the file in a single piece of contiguous memory with some extra unused space known as the buffer gap.  On character insertion and deletion the gap is first moved to the current point.  A character deletion then extends the gap by moving the gap pointer back by 1 OR the gap is reduced by 1 when a character is inserted.  The Buffer-Gap technique is elegant and significantly reduces the amount of code required to load a file, modify it and redraw the display.
+
+There is regex code in the editor that is derived from Marc André Tanner's Vis editor.
+
 ## Key Bindings
     C-A   begining-of-line
     C-B   backward-character
