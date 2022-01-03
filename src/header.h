@@ -9,6 +9,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <string.h>
 #include <locale.h>
 #include <signal.h>
@@ -31,6 +32,7 @@
 #define MIN_GAP_SIZE 16
 #define FNAME_MAX 256
 #define BNAME_MAX 16
+#define TEMPFILE "/tmp/mpeXXXXXX"
 
 enum {
   HL_HIGHLIGHT_NUMBERS = 1 << 0,
@@ -283,4 +285,5 @@ int32_t parse_text(buffer_t *b, int32_t p);
 void replace_string(buffer_t *b, char_t *s, char_t *r, int32_t slen, int32_t rlen);
 void init_colors(void);
 void query_replace(void);
+int32_t getfilename(char *prompt, char_t *buf, int32_t nbuf);
 #endif

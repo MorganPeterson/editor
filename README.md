@@ -21,7 +21,7 @@ There is regex code in the editor that is derived from Marc André Tanner's Vis 
     C-P   previous line
     C-R   search-backwards
     C-S	  search-forwards
-    C-U   Undo
+    C-U   undo
     C-V   Page Down
     C-W   Kill Region (Cut)
     C-X   CTRL-X command prefix

@@ -261,7 +261,7 @@ insertfile(void)
 {
   char_t temp[FNAME_MAX];
   temp[0] = '\0';
-  if (get_input("insert-file: ", temp, FNAME_MAX, 1))
+  if (getfilename("insert-file: ", temp, FNAME_MAX))
     (void)insert_file(temp, 1);
 }
 
@@ -273,7 +273,7 @@ findfile(void)
 
   fname[0] = '\0';
 
-  if (get_input("find-file: ", fname, FNAME_MAX, 1)) {
+  if (getfilename("find-file: ", fname, FNAME_MAX)) {
     buffer_t *b = find_buffer_fname(fname);
 
     disassociate_buffer(curwin);

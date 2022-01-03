@@ -7,7 +7,9 @@
 #if GCC_VERSION>=5004000 || CLANG_VERSION>=4000000
 #define addu __builtin_add_overflow
 #else
-static inline bool addu(size_t a, size_t b, size_t *c) {
+static inline bool
+addu(size_t a, size_t b, size_t *c)
+{
 	if (SIZE_MAX - a < b)
 		return false;
 	*c = a + b;

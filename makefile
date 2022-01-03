@@ -17,6 +17,7 @@ S=strutils
 B=buffer
 W=window
 K=keys
+P=complete
 C=commands
 D=display
 U=utf
@@ -33,6 +34,7 @@ SU=$(SRCD)/$(S).c
 BF=$(SRCD)/$(B).c
 WN=$(SRCD)/$(W).c
 KY=$(SRCD)/$(K).c
+CP=$(SRCD)/$(P).c
 CM=$(SRCD)/$(C).c
 DY=$(SRCD)/$(D).c
 U8=$(SRCD)/$(U).c
@@ -48,6 +50,7 @@ SUO=$(OBJD)/$(S).o
 BFO=$(OBJD)/$(B).o
 WNO=$(OBJD)/$(W).o
 KYO=$(OBJD)/$(K).o
+CPO=$(OBJD)/$(P).o
 CMO=$(OBJD)/$(C).o
 DYO=$(OBJD)/$(D).o
 U8O=$(OBJD)/$(U).o
@@ -58,9 +61,9 @@ SYO=$(OBJD)/$(X).o
 TMO=$(OBJD)/$(T).o
 RPO=$(OBJD)/$(E).o
 
-OBJS=$(SUO) $(IUO) $(BFO) $(WNO) $(KYO) $(CMO) $(DYO) $(U8O) $(RXO) $(CHO) $(RPO) $(UNO) $(SYO) $(TMO)
+OBJS=$(SUO) $(IUO) $(BFO) $(WNO) $(KYO) $(CPO) $(CMO) $(DYO) $(U8O) $(RXO) $(CHO) $(RPO) $(UNO) $(SYO) $(TMO)
 
-.PHONY:all $(I) $(S) $(B) $(W) $(K) $(C) $(D) $(U) $(R) $(H) $(E) $(N) $(X) $(T) $(NAME)
+.PHONY:all $(I) $(S) $(B) $(W) $(K) $(P) $(C) $(D) $(U) $(R) $(H) $(E) $(N) $(X) $(T) $(NAME)
 
 all: $(OBJS) $(NAME)
 $(I):$(IUO)
@@ -68,6 +71,7 @@ $(S):$(SUO)
 $(B):$(BFO)
 $(W):$(WNO)
 $(K):$(KYO)
+$(P):$(CPO)
 $(C):$(CMO)
 $(D):$(DYO)
 $(U):$(U8O)
@@ -103,6 +107,11 @@ $(KYO):$(KY)
 	@echo "building $(K)"
 	@mkdir -p $(@D)
 	@$(CC) $(FLAGS) -c $(KY) -o $@
+
+$(CPO):$(CP)
+	@echo "building $(P)"
+	@mkdir -p $(@D)
+	@$(CC) $(FLAGS) -c $(CP) -o $@
 
 $(CMO):$(CM)
 	@echo "building $(C)"
