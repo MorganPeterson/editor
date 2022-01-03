@@ -47,6 +47,8 @@ keymap_t key_map[] = {
 	{"esc-v backward-page", "\x1B\x76", pageup},
 	{"esc-g goto-line", "\x1B\x67", gotoline},
 	{"esc-w copy-region", "\x1B\x77", copyregion},
+	{"esc-< beginning-of-buffer", "\x1B\x3C", beginning_of_buffer},
+	{"esc-< end-of-buffer", "\x1B\x3E", end_of_buffer},
 	{"del forward-delete-char", "\x1B\x5B\x33\x7E", delete}, /* Del key */
 	{"backspace delete-left", "\x7f", backspace},            /* backspace key */
 	{"up previous-line", "\x1B\x5B\x41", up},                /* up arrow */
