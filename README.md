@@ -14,7 +14,7 @@ There is regex code in the editor that is derived from Marc André Tanner's Vis 
     C-D   delete-char
     C-E   end-of-line
     C-F   forward Character
-    C-G	  Abort (at prompts)
+    C-G   Abort (at prompts)
     C-H   backspace
     C-K   kill-to-eol
     C-N   next line

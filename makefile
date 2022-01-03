@@ -1,4 +1,4 @@
-NAME=tvi
+NAME=mpe
 CC=gcc
 FLAGS+=-O2 -std=c11 -pedantic -W -Wall -g
 
@@ -161,4 +161,4 @@ clean:
 
 install:
 	@echo "installing editor"
-	@cp bin/tvi /usr/local/bin/tvi
+	@cp bin/mpe /usr/local/bin/mpe
