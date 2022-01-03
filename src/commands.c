@@ -298,13 +298,16 @@ search(void)
 	int32_t cpos = 0;
 	int32_t c, found;
 	int32_t old_point = curbuf->point;
-	char temp[K_BUFFER_LENGTH];
+
+  char temp[K_BUFFER_LENGTH];
 	filerange_t match[1];
 	match[0].start = old_point;
 	match[0].end = old_point;
 	temp[0] = '\0';
-	display_prompt_and_response("search: ", temp);
-	cpos = strlen(temp);
+
+  display_prompt_and_response("search: ", temp);
+
+  cpos = strlen(temp);
 
 	for(;;) {
 		c = getch();
@@ -507,75 +510,5 @@ deleteotherwindows(void)
 void
 queryreplace(void)
 {
-	int32_t oldpoint = curbuf->point;
-	int32_t lastpoint = -1;
-    int32_t found;
-	char question[128];
-	int32_t slen, rlen;
-	int32_t numsub = 0;
-    int32_t ask = 1;
-	int32_t c;
-	filerange_t match[1];
-	match[0].start = oldpoint;
-	match[0].end = curbuf->size;
-
-	char_t searchtext[64];
-	char_t replacetext[64];
-	searchtext[0] = '\0';
-	replacetext[0] = '\0';
-	
-	if (!get_input("search: ", searchtext, 64, 1))
-		return; 
-
-	if (!get_input("replace: ", replacetext, 64, 1))
-		return;
-
-	slen = str_len(searchtext);
-	rlen = str_len(replacetext);
-
-	sprintf(question, "replace '%s' with '%s'? ", searchtext, replacetext);
-
-	/* scan through file from point */
-	numsub = 0;
-	while (1) {
-		found = search_forward((char*)searchtext, match, 1);
-		if (found == -1) {
-			curbuf->point = (lastpoint == -1 ? oldpoint : lastpoint);
-			break;
-		}
-		curbuf->point = found;
-		/* search_forward places point at end of search, move to start of search */
-		curbuf->point -= slen;
-
-		if (ask) {
-			msg("(y)es, (n)o, (!)do the rest, (q)uit");
-			clrtoeol();
-
-questionprompt:
-			update_display();
-			c = getch();
-			switch (c) {
-			case 'y': /* yes, substitute */
-				break;
-			case 'n': /* no, don't substitute */
-				curbuf->point = found;
-				continue;
-			case '!': /* yes/no stop asking */
-				ask = 0;
-				break;
-			case 0x1B: /* esc key; fallthrough*/
-				flushinp();
-			case 'q': /* controlled exit */
-				return;
-			default:
-				msg("command not recognized");
-				goto questionprompt;
-			}
-		}
-		lastpoint = curbuf->point;
-		match[0].start = lastpoint;
-		replace_string(curbuf, searchtext, replacetext, slen, rlen);
-		numsub++;
-	}
-	msg("%d substitutions", numsub);	
+  query_replace();
 }

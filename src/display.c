@@ -126,7 +126,7 @@ display_character(buffer_t *b, char_t *p) {
   addch(*p);
 }
 
-static void
+void
 display(window_t *w, int32_t flag)
 {
   buffer_t *b = w->buf;

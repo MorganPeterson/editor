@@ -255,6 +255,11 @@ execute_undo(undo_t *up, char_t *input)
       curbuf->mark = up->point + strlen((char*)up->str);
       killregion();
       break;
+
+    case UNDO_REPLACE:
+      curbuf->point = up->point;
+      replace_string(curbuf, up->rep, up->str, str_len(up->rep), str_len(up->str));
+      break;
   }
 
 	curbuf->undo_cnt = -1;

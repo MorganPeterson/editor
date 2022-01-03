@@ -197,6 +197,7 @@ void free_windows(void);
 char_t *get_key(keymap_t *keys, keymap_t **key_return);
 int32_t move_gap(buffer_t *b, int32_t offset);
 void insert(char_t *c);
+void display(window_t *w, int32_t flag);
 void update_display(void);
 void display_prompt_and_response(char *prompt, char *response);
 int32_t line_start(buffer_t *b, int32_t offset);
@@ -281,4 +282,5 @@ void set_parse_state(buffer_t * b, int32_t p);
 int32_t parse_text(buffer_t *b, int32_t p);
 void replace_string(buffer_t *b, char_t *s, char_t *r, int32_t slen, int32_t rlen);
 void init_colors(void);
+void query_replace(void);
 #endif
