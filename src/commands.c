@@ -136,6 +136,26 @@ lineend(void)
 }
 
 void
+backwardword(void)
+{
+	char_t *p;
+	while (!isspace(*(p = ptr(curbuf, curbuf->point))) && curbuf->buf_start < p)
+		--curbuf->point;
+	while (isspace(*(p = ptr(curbuf, curbuf->point))) && curbuf->buf_start < p)
+		--curbuf->point;
+}
+
+void
+forwardword(void)
+{
+	char_t *p;
+	while (!isspace(*(p = ptr(curbuf, curbuf->point))) && p < curbuf->buf_end)
+		++curbuf->point;
+	while (isspace(*(p = ptr(curbuf, curbuf->point))) && p < curbuf->buf_start)
+		++curbuf->point;
+}
+
+void
 delete(void)
 {
   char_t the_char[7]; /* the deleted char, allow 6 unsigned chars plus a null */
@@ -273,56 +293,57 @@ findfile(void)
 }
 
 void
-search(void) {
-  int32_t cpos = 0;
-  int32_t c, found;
-  int32_t old_point = curbuf->point;
-  char temp[K_BUFFER_LENGTH];
-  filerange_t match[1];
-  match[0].start = old_point;
-  match[0].end = old_point;
-  temp[0] = '\0';
-  display_prompt_and_response("search: ", temp);
-  cpos = strlen(temp);
+search(void)
+{
+	int32_t cpos = 0;
+	int32_t c, found;
+	int32_t old_point = curbuf->point;
+	char temp[K_BUFFER_LENGTH];
+	filerange_t match[1];
+	match[0].start = old_point;
+	match[0].end = old_point;
+	temp[0] = '\0';
+	display_prompt_and_response("search: ", temp);
+	cpos = strlen(temp);
 
-  for(;;) {
-    c = getch();
-    /* ignore control keys other than C-g, backspace, CR,  C-s, C-R, ESC */
+	for(;;) {
+		c = getch();
+		/* ignore control keys other than C-g, backspace, CR,  C-s, C-R, ESC */
 		if (c < 32 && c != 07 && c != 0x08 && c != 0x13 && c != 0x12 && c != 0x1b)
 			continue;
 
-    switch (c) {
-      case 0x1B: /* esc */
-        temp[cpos] = '\0';
-        flushinp(); /* discard without printing to screen */
-        return;
-      case 0x07: /* ctrl-g */
-        curbuf->point = old_point;
-        return;
-      case 0x13: /* ctrl-s search forward */
-        found = search_forward(temp, match, 1);
-        display_search_result(found, match[0].start, FWD_SEARCH, "search: ", temp);
-        break;
-      case 0x12: /* ctrl-r search backward */
-        found = search_backward(temp, match, 1);
-        display_search_result(found, match[0].start, BWD_SEARCH, "search: ", temp);
-        break;
-      case 0x7F: /* fallthrough - del, erase */
-      case 0x08: /* backspace */
-        if (cpos == 0)
-          continue;
-        temp[--cpos] = '\0';
-        display_prompt_and_response("search: ", temp);
-        break;
-      default:
-        if (cpos < K_BUFFER_LENGTH - 1) {
-          temp[cpos++] = c;
-          temp[cpos] = '\0';
-          display_prompt_and_response("search: ", temp);
-        }
-        break;
-    }
-  }
+		switch (c) {
+		case 0x1B: /* esc */
+			temp[cpos] = '\0';
+			flushinp(); /* discard without printing to screen */
+			return;
+		case 0x07: /* ctrl-g */
+			curbuf->point = old_point;
+			return;
+		case 0x13: /* ctrl-s search forward */
+			found = search_forward(temp, match, 1);
+			display_search_result(found, match[0].start, FWD_SEARCH, "search: ", temp);
+			break;
+		case 0x12: /* ctrl-r search backward */
+			found = search_backward(temp, match, 1);
+			display_search_result(found, match[0].start, BWD_SEARCH, "search: ", temp);
+			break;
+		case 0x7F: /* fallthrough - del, erase */
+		case 0x08: /* backspace */
+			if (cpos == 0)
+				continue;
+			temp[--cpos] = '\0';
+			display_prompt_and_response("search: ", temp);
+			break;
+		default:
+			if (cpos < K_BUFFER_LENGTH - 1) {
+				temp[cpos++] = c;
+				temp[cpos] = '\0';
+				display_prompt_and_response("search: ", temp);
+			}
+			break;
+		}
+	}
 }
 
 void
@@ -460,12 +481,14 @@ killbuffer(void) {
 }
 
 void
-splitwindow(void) {
+splitwindow(void)
+{
   (void)split_current_window();
 }
 
 void
-otherwindow(void) {
+otherwindow(void)
+{
   curwin->update = 1;
   curwin = (curwin->next == NULL ? headwin : curwin->next);
   curbuf = curwin->buf;
@@ -474,9 +497,85 @@ otherwindow(void) {
 }
 
 void
-deleteotherwindows(void){
+deleteotherwindows(void)
+{
   if (headwin->next == NULL)
     return;
   free_other_windows(curwin);
 }
 
+void
+queryreplace(void)
+{
+	int32_t oldpoint = curbuf->point;
+	int32_t lastpoint = -1;
+    int32_t found;
+	char question[128];
+	int32_t slen, rlen;
+	int32_t numsub = 0;
+    int32_t ask = 1;
+	int32_t c;
+	filerange_t match[1];
+	match[0].start = oldpoint;
+	match[0].end = curbuf->size;
+
+	char_t searchtext[64];
+	char_t replacetext[64];
+	searchtext[0] = '\0';
+	replacetext[0] = '\0';
+	
+	if (!get_input("search: ", searchtext, 64, 1))
+		return; 
+
+	if (!get_input("replace: ", replacetext, 64, 1))
+		return;
+
+	slen = str_len(searchtext);
+	rlen = str_len(replacetext);
+
+	sprintf(question, "replace '%s' with '%s'? ", searchtext, replacetext);
+
+	/* scan through file from point */
+	numsub = 0;
+	while (1) {
+		found = search_forward((char*)searchtext, match, 1);
+		if (found == -1) {
+			curbuf->point = (lastpoint == -1 ? oldpoint : lastpoint);
+			break;
+		}
+		curbuf->point = found;
+		/* search_forward places point at end of search, move to start of search */
+		curbuf->point -= slen;
+
+		if (ask) {
+			msg("(y)es, (n)o, (!)do the rest, (q)uit");
+			clrtoeol();
+
+questionprompt:
+			update_display();
+			c = getch();
+			switch (c) {
+			case 'y': /* yes, substitute */
+				break;
+			case 'n': /* no, don't substitute */
+				curbuf->point = found;
+				continue;
+			case '!': /* yes/no stop asking */
+				ask = 0;
+				break;
+			case 0x1B: /* esc key; fallthrough*/
+				flushinp();
+			case 'q': /* controlled exit */
+				return;
+			default:
+				msg("command not recognized");
+				goto questionprompt;
+			}
+		}
+		lastpoint = curbuf->point;
+		match[0].start = lastpoint;
+		replace_string(curbuf, searchtext, replacetext, slen, rlen);
+		numsub++;
+	}
+	msg("%d substitutions", numsub);	
+}

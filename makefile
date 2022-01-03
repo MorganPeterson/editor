@@ -24,6 +24,8 @@ R=regex
 H=search
 N=undo
 X=syntax
+E=replace
+T=themes
 
 MN=$(SRCD)/$(M).c
 IU=$(SRCD)/$(I).c
@@ -38,6 +40,8 @@ RX=$(SRCD)/$(R).c
 CH=$(SRCD)/$(H).c
 UN=$(SRCD)/$(N).c
 SY=$(SRCD)/$(X).c
+TM=$(SRCD)/$(T).c
+RP=$(SRCD)/$(E).c
 
 IUO=$(OBJD)/$(I).o
 SUO=$(OBJD)/$(S).o
@@ -51,10 +55,12 @@ RXO=$(OBJD)/$(R).o
 CHO=$(OBJD)/$(H).o
 UNO=$(OBJD)/$(N).o
 SYO=$(OBJD)/$(X).o
+TMO=$(OBJD)/$(T).o
+RPO=$(OBJD)/$(E).o
 
-OBJS=$(SUO) $(IUO) $(BFO) $(WNO) $(KYO) $(CMO) $(DYO) $(U8O) $(RXO) $(CHO) $(UNO) $(SYO)
+OBJS=$(SUO) $(IUO) $(BFO) $(WNO) $(KYO) $(CMO) $(DYO) $(U8O) $(RXO) $(CHO) $(RPO) $(UNO) $(SYO) $(TMO)
 
-.PHONY:all $(I) $(S) $(B) $(W) $(K) $(C) $(D) $(U) $(R) $(H) $(N) $(X) $(NAME)
+.PHONY:all $(I) $(S) $(B) $(W) $(K) $(C) $(D) $(U) $(R) $(H) $(E) $(N) $(X) $(T) $(NAME)
 
 all: $(OBJS) $(NAME)
 $(I):$(IUO)
@@ -69,6 +75,8 @@ $(R):$(RXO)
 $(H):$(CHO)
 $(N):$(UNO)
 $(X):$(SYO)
+$(T):$(TMO)
+$(E):$(RPO)
 $(NAME):$(BIND)/$(NAME)
 
 $(IUO):$(IU)
@@ -121,6 +129,11 @@ $(CHO):$(CH)
 	@mkdir -p $(@D)
 	@$(CC) $(FLAGS) -c $(CH) -o $@
 
+$(RPO):$(RP)
+	@echo "building $(E)"
+	@mkdir -p $(@D)
+	@$(CC) $(FLAGS) -c $(RP) -o $@
+
 $(UNO):$(UN)
 	@echo "building $(N)"
 	@mkdir -p $(@D)
@@ -130,6 +143,11 @@ $(SYO):$(SY)
 	@echo "building $(X)"
 	@mkdir -p $(@D)
 	@$(CC) $(FLAGS) -c $(SY) -o $@
+
+$(TMO):$(TM)
+	@echo "building $(T)"
+	@mkdir -p $(@D)
+	@$(CC) $(FLAGS) -c $(TM) -o $@
 
 $(BIND)/$(NAME):$(MN)
 	@echo "building $(NAME)"

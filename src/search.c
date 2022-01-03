@@ -97,4 +97,3 @@ search_backward(const char *str, filerange_t pmatch[], size_t mrange)
   regex_free(r);
 	return ret;
 }
-

@@ -7,52 +7,55 @@
 #include "header.h"
 
 keymap_t key_map[] = {
-  {"C-a beginning-of-line", "\x01", linebegin},
-  {"C-b backward-char", "\x02", left},
-  {"C-d delete", "\x04", delete},
-  {"C-e end-of-line", "\x05", lineend},
-  {"C-f forward-char", "\x06", right},
-  {"C-h backspace", "\x08", backspace},
-  {"C-k kill-to-eol", "\x0B", killtoeol},
-  {"C-n next-line", "\x0E", down},
-  {"C-p previous-line", "\x10", up},
-  {"C-r search-backward", "\x12", search},
-  {"C-s search-forward", "\x13", search},
-  {"C-u undo", "\x15", undocmd},
-  {"C-v forward-page", "\x16", pagedown},
-  {"C-w kill-region", "\x17", killregion},
-  {"C-y yank", "\x19", yank},
-  {"C-x 1 delete-other-windows", "\x18\x31", deleteotherwindows},
-  {"C-x 2 split-window", "\x18\x32", splitwindow},
-  {"C-x i insert-file", "\x18\x69", insertfile},
-  {"C-x k kill-buffer", "\x18\x6B", killbuffer},
-  {"C-x n next-buffer", "\x18\x6E", nextbuffer},
-  {"C-x o other-window", "\x18\x6F", otherwindow},
-  {"C-space set-mark", "\x00", setmark},
-  {"C-x C-c exit", "\x18\x03", quit},
-  {"C-x C-f find-file", "\x18\x06", findfile},
-  {"C-x C-n next-buffer", "\x18\x0E", nextbuffer},
-  {"C-x C-s save-buffer", "\x18\x13", savebuffer},
-  {"C-x C-w write-file", "\x18\x17", writefile},
-  {"C-x = curosr-position", "\x18\x3D", cursorpos},
-  {"esc-c copy-region", "\x1B\x63", copyregion},
-  {"esc-i yank", "\x1B\x69", yank},
-  {"esc-k kill-region", "\x1B\x6B", killregion},
-  {"esc-m set-mark", "\x1B\x6D", setmark},
-  {"esc-n next-buffer", "\x1B\x6E", nextbuffer},
-  {"esc-o delete-other-windows", "\x1B\x6F", deleteotherwindows},
-  {"esc-v backward-page", "\x1B\x76", pageup},
-  {"esc-g goto-line", "\x1B\x67", gotoline},
-  {"esc-w copy-region", "\x1B\x77", copyregion},
-  {"del forward-delete-char", "\x1B\x5B\x33\x7E", delete}, /* Del key */
-  {"backspace delete-left", "\x7f", backspace},            /* backspace key */
-  {"up previous-line", "\x1B\x5B\x41", up},                /* up arrow */
-  {"down next-line", "\x1B\x5B\x42", down},                /* down arrow */
-  {"left backward-character", "\x1B\x5B\x44", left},       /* left arrow */
-  {"right forward-character", "\x1B\x5B\x43", right},      /* right arrow */
-  {"pgdn forward-page", "\x1B\x5B\x36\x7E", pagedown},     /* PgDn key */
-  {"pgup backward-page", "\x1B\x5B\x35\x7E", pageup},      /* PgUp key */
-  {NULL, NULL, NULL},
+	{"C-a beginning-of-line", "\x01", linebegin},
+	{"C-b backward-char", "\x02", left},
+	{"C-d delete", "\x04", delete},
+	{"C-e end-of-line", "\x05", lineend},
+	{"C-f forward-char", "\x06", right},
+	{"C-h backspace", "\x08", backspace},
+	{"C-k kill-to-eol", "\x0B", killtoeol},
+	{"C-n next-line", "\x0E", down},
+	{"C-p previous-line", "\x10", up},
+	{"C-r search-backward", "\x12", search},
+	{"C-s search-forward", "\x13", search},
+	{"C-u undo", "\x15", undocmd},
+	{"C-v forward-page", "\x16", pagedown},
+	{"C-w kill-region", "\x17", killregion},
+	{"C-y yank", "\x19", yank},
+	{"C-x 1 delete-other-windows", "\x18\x31", deleteotherwindows},
+	{"C-x 2 split-window", "\x18\x32", splitwindow},
+	{"C-x i insert-file", "\x18\x69", insertfile},
+	{"C-x k kill-buffer", "\x18\x6B", killbuffer},
+	{"C-x n next-buffer", "\x18\x6E", nextbuffer},
+	{"C-x o other-window", "\x18\x6F", otherwindow},
+	{"C-space set-mark", "\x00", setmark},
+	{"C-x C-c exit", "\x18\x03", quit},
+	{"C-x C-f find-file", "\x18\x06", findfile},
+	{"C-x C-n next-buffer", "\x18\x0E", nextbuffer},
+	{"C-x C-s save-buffer", "\x18\x13", savebuffer},
+	{"C-x C-w write-file", "\x18\x17", writefile},
+	{"C-x = cursor-position", "\x18\x3D", cursorpos},
+	{"esc-b backward-word", "\x1B\x62", backwardword},
+	{"esc-c copy-region", "\x1B\x63", copyregion},
+	{"esc-f forward-word", "\x1B\x66", forwardword},
+	{"esc-i yank", "\x1B\x69", yank},
+	{"esc-k kill-region", "\x1B\x6B", killregion},
+	{"esc-m set-mark", "\x1B\x6D", setmark},
+	{"esc-n next-buffer", "\x1B\x6E", nextbuffer},
+	{"esc-o delete-other-windows", "\x1B\x6F", deleteotherwindows},
+	{"esc-r query-replace", "\x1B\x72", queryreplace},
+	{"esc-v backward-page", "\x1B\x76", pageup},
+	{"esc-g goto-line", "\x1B\x67", gotoline},
+	{"esc-w copy-region", "\x1B\x77", copyregion},
+	{"del forward-delete-char", "\x1B\x5B\x33\x7E", delete}, /* Del key */
+	{"backspace delete-left", "\x7f", backspace},            /* backspace key */
+	{"up previous-line", "\x1B\x5B\x41", up},                /* up arrow */
+	{"down next-line", "\x1B\x5B\x42", down},                /* down arrow */
+	{"left backward-character", "\x1B\x5B\x44", left},       /* left arrow */
+	{"right forward-character", "\x1B\x5B\x43", right},      /* right arrow */
+	{"pgdn forward-page", "\x1B\x5B\x36\x7E", pagedown},     /* PgDn key */
+	{"pgup backward-page", "\x1B\x5B\x35\x7E", pageup},      /* PgUp key */
+	{NULL, NULL, NULL },
 };
 
 char_t

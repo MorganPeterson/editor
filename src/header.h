@@ -37,6 +37,15 @@ enum {
   HL_HIGHLIGHT_STRINGS = 1 << 1,
 };
 
+#define FWD_SEARCH 1
+#define BWD_SEARCH 2
+
+typedef enum {
+  B_MODIFIED = 0x01,
+  B_OVERWRITE = 0x02, /* overwite mode */
+  B_SPECIAL = 0x04,   /* is a buffer of the name of *name* */
+} buffer_flags_t;
+
 enum {
   HL_NORMAL = 1,
   HL_SYMBOL,
@@ -51,15 +60,6 @@ enum {
   HL_BACKGROUND,
   HL_FOREGROUND,
 };
-
-#define FWD_SEARCH 1
-#define BWD_SEARCH 2
-
-typedef enum {
-  B_MODIFIED = 0x01,
-  B_OVERWRITE = 0x02, /* overwite mode */
-  B_SPECIAL = 0x04,   /* is a buffer of the name of *name* */
-} buffer_flags_t;
 
 typedef enum {
   UNDO_INSERT,
@@ -82,6 +82,13 @@ typedef struct Regex Regex;
 typedef struct filerange_t filerange_t;
 typedef struct undo_t undo_t;
 typedef struct syntax_t syntax_t;
+typedef struct color_t color_t;
+
+struct color_t {
+  char *desc;
+  int eightbit;
+  char *twentyfourbit;
+};
 
 struct syntax_t {
   char *filetype;
@@ -229,6 +236,9 @@ void splitwindow(void);
 void otherwindow(void);
 void deleteotherwindows(void);
 void yank(void);
+void forwardword(void);
+void backwardword(void);
+void queryreplace(void);
 int32_t line_to_point(int32_t line);
 int32_t goto_line(int32_t line);
 void gotoline(void);
@@ -269,4 +279,6 @@ void free_syntax(syntax_t *s);
 void select_syntax(buffer_t *b);
 void set_parse_state(buffer_t * b, int32_t p);
 int32_t parse_text(buffer_t *b, int32_t p);
+void replace_string(buffer_t *b, char_t *s, char_t *r, int32_t slen, int32_t rlen);
+void init_colors(void);
 #endif

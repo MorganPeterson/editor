@@ -7,6 +7,7 @@
 #include "header.h"
 
 extern keymap_t key_map;
+extern color_t colors;
 
 volatile sig_atomic_t done = 0;
 window_t *headwin;
@@ -40,16 +41,7 @@ main(int argc, char **argv) {
   TABSIZE=4;
 
   start_color();
-  init_pair(HL_BACKGROUND, 31, 255);
-  init_pair(HL_NORMAL, 238, 255);
-  init_pair(HL_SYMBOL, 25, 255);
-  init_pair(HL_NUMBER, 166, 255);
-  init_pair(HL_DOUBLE_QUOTE, 64, 255);
-  init_pair(HL_SINGLE_QUOTE, 28, 255);
-  init_pair(HL_MLCOMMENT, 102, 255);
-  init_pair(HL_COMMENT, 102, 255);
-  init_pair(HL_MODELINE, 24, 252);
-  init_pair(HL_KEYWORD, 162, 255);
+  init_colors();
 
   bkgd(COLOR_PAIR(HL_BACKGROUND));
 

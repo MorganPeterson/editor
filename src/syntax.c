@@ -18,8 +18,7 @@ char *C_HL_keywords[] = {
   "int|", "int32_t|", "int8_t|", "int64_t|", "long|", "double|", "float|",
   "char|", "unsigned|", "signed|", "void|", "#include|", "#define|", "auto",
   "const", "short|", "defualt", "register", "sizeof|", "volatile|", "goto|",
-  "do", "extern", NULL
-};
+  "do", "extern", NULL };
 
 char *JS_HL_keywords[] = {
   "abstract", "async", "await", "boolean", "break", "byte", "case", "catch",
@@ -30,8 +29,7 @@ char *JS_HL_keywords[] = {
   "new", "null", "of", "package", "private", "protected", "public", "return",
   "set", "short", "static", "super", "switch", "synchronized", "this",
   "throw", "throws", "transient", "true", "try", "typeof", "var", "void",
-  "volatile", "while", "with", "yield", NULL
-};
+  "volatile", "while", "with", "yield", NULL };
 
 char *GO_HL_keywords[] = {"break", "case", "chan", "const", "continue",
   "default", "defer", "else", "fallthrough", "for", "func", "go", "goto", "if",
@@ -41,13 +39,13 @@ char *GO_HL_keywords[] = {"break", "case", "chan", "const", "continue",
   "int16", "int32", "int64", "rune", "string", "uint", "uint8", "uint16",
   "uint32", "uint64", "uintptr", "append", "cap", "close", "complex", "copy",
   "delete", "imag", "len", "make", "new", "panic", "print", "println", "real",
-  "recover", NULL};
+  "recover", NULL };
 
 char *SH_HL_keywords[] = {"if", "then", "elif", "else", "fi", "case",
   "in", "esac", "while", "for", "do", "done", "continue", "local", "return",
   "select", "-a", "-b", "-c", "-d", "-e", "-f", "-g", "-h", "-k", "-p", "-r",
   "-s", "-t", "-u", "-w", "-x", "-O", "-G", "-L", "-S", "-N", "-nt", "-ot",
-  "-ef", "-o", "-z", "-n", "-eq", "-ne", "-lt", "-le", "-gt", "-ge", NULL};
+  "-ef", "-o", "-z", "-n", "-eq", "-ne", "-lt", "-le", "-gt", "-ge", NULL };
 
 syntax_t HLDB[] = {
   {
@@ -107,49 +105,49 @@ get_char_at(buffer_t *b, int32_t p)
 int32_t
 parse_text(buffer_t *b, int32_t p)
 {
-  if (skip_count-- > 0)
-    return state;
+	if (skip_count-- > 0)
+		return state;
 
-  if (b->syntax == NULL)
-    return state;
+	if (b->syntax == NULL)
+		return state;
 
-  char_t *now = get_char_at(b, p);
-  char_t *next = get_char_at(b, p + 1);
-  state = next_state;
+	char_t *now = get_char_at(b, p);
+	char_t *next = get_char_at(b, p + 1);
+	state = next_state;
 
-  char *mls = b->syntax->multiline_comment_start;
-  char *mle = b->syntax->multiline_comment_end;
-  char *slc = b->syntax->singleline_comment_start;
-  char **kyw = b->syntax->keywords;
+	char *mls = b->syntax->multiline_comment_start;
+	char *mle = b->syntax->multiline_comment_end;
+	char *slc = b->syntax->singleline_comment_start;
+	char **kyw = b->syntax->keywords;
 
-  if (now == NULL)
-    return state;
+  	if (now == NULL)
+    	return state;
 
-  if (state == HL_KEYWORD && is_separator(*now)) {
-    next_state = state = HL_NORMAL;
-  }
+  	if (state == HL_KEYWORD && is_separator(*now)) {
+    	next_state = state = HL_NORMAL;
+  	}
 
-  if (next != NULL) {
-    if (mls != NULL || mle != NULL) {
-      if (state == HL_NORMAL && *now == mls[0] && *next == mls[1]) {
-        skip_count = 1;
-        return (next_state = state = HL_MLCOMMENT);
-      }
+  	if (next != NULL) {
+    	if (mls != NULL || mle != NULL) {
+      		if (state == HL_NORMAL && *now == mls[0] && *next == mls[1]) {
+        		skip_count = 1;
+        		return (next_state = state = HL_MLCOMMENT);
+      		}
 
-      if (state == HL_MLCOMMENT && *now == mle[0] && *next == mle[1]) {
-        skip_count = 1;
-        next_state = HL_NORMAL;
-        return HL_MLCOMMENT;
-      }
-    }
+      		if (state == HL_MLCOMMENT && *now == mle[0] && *next == mle[1]) {
+        		skip_count = 1;
+        		next_state = HL_NORMAL;
+        		return HL_MLCOMMENT;
+      		}
+    	}
 
-    if (slc != NULL) {
-      if (state == HL_NORMAL && *now == '/' && *next == '/') {
-        skip_count = 1;
-        return (next_state = state = HL_COMMENT);
-      }
-    }
-  }
+    	if (slc != NULL) {
+      		if (state == HL_NORMAL && *now == '/' && *next == '/') {
+        		skip_count = 1;
+        		return (next_state = state = HL_COMMENT);
+      		}
+    	}
+  	}
 
 	if (state == HL_COMMENT && *now == '\n')
 		return (next_state = HL_NORMAL);
@@ -183,37 +181,36 @@ parse_text(buffer_t *b, int32_t p)
 	if (state != HL_NORMAL)
 		return (next_state = state);
 
-  if (state == HL_NORMAL && *now >= '0' && *now <= '9') {
-    next_state = HL_NORMAL;
-    return (state = HL_NUMBER);
-  }
+	if (state == HL_NORMAL && *now >= '0' && *now <= '9') {
+		next_state = HL_NORMAL;
+		return (state = HL_NUMBER);
+	}
 
-  if (state == HL_NORMAL && 1 == is_symbol(*now)) {
-    next_state = HL_NORMAL;
-    prev_sep = 1;
-    return (state = HL_SYMBOL);
-  }
+	if (state == HL_NORMAL && 1 == is_symbol(*now)) {
+		next_state = HL_NORMAL;
+		prev_sep = 1;
+		return (state = HL_SYMBOL);
+	}
 
-  if (is_separator(*now)) {
-    prev_sep = 1;
-    return (next_state = state);
-  }
+	if (is_separator(*now)) {
+		prev_sep = 1;
+		return (next_state = state);
+	}
 
-  if (prev_sep) {
-    prev_sep = 0;
-    int32_t j;
-    for (j = 0; kyw[j]; j++) {
-      int32_t klen = strlen(kyw[j]);
-      int32_t kw2 = kyw[j][klen - 1] == '|';
-      if (kw2)
-        klen--;
-      if (!strncmp((char*)now, kyw[j], klen) && is_separator(*(now + klen))) {
-        return (next_state = HL_KEYWORD);
-      }
-    }
-  }
-
-  return (next_state = state);
+	if (prev_sep) {
+		prev_sep = 0;
+		int32_t j;
+		for (j = 0; kyw[j]; j++) {
+			int32_t klen = strlen(kyw[j]);
+			int32_t kw2 = kyw[j][klen - 1] == '|';
+			if (kw2)
+				klen--;
+			if (!strncmp((char*)now, kyw[j], klen) && is_separator(*(now + klen))) {
+				return (next_state = HL_KEYWORD);
+			}
+		}
+	}
+	return (next_state = state);
 }
 
 void
@@ -242,7 +239,7 @@ select_syntax(buffer_t *b)
     	syntax_t *s = &HLDB[i];
     	j = 0;
     	while (s->filematch[j]) {
-      		is_ext = s->filematch[i][0] == '.';	
+      		is_ext = s->filematch[j][0] == '.';
       		if ((is_ext && ext && !strcmp(ext, s->filematch[j])) ||
 				(!is_ext && strstr((char*)b->file_name, s->filematch[j]))) {
         		b->syntax = s;
