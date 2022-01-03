@@ -109,6 +109,6 @@ replace_string(buffer_t *bp, char_t *s, char_t *r, int32_t slen, int32_t rlen)
 	memcpy(ptr(bp, bp->point), r, rlen * sizeof (char_t));
 	add_mode(bp, B_MODIFIED);
 
-	add_undo(curbuf, UNDO_REPLACE, curbuf->point, (char_t *)s, (char_t *)r);
+	add_undo(curbuf, UNDO_REPLACE, curbuf->point, s, r);
 	curbuf->point = found - (slen - rlen); /* set point to end of replacement */
 }

@@ -17,6 +17,7 @@ new_undo(void)
 	up->prev = NULL;
 	up->point = 0;
 	up->str = NULL;
+  up->rep = NULL;
 	up->type = UNDO_NONE;
 
 	return up;
@@ -53,6 +54,8 @@ free_undos(undo_t *up)
   while (prev != NULL) {
     if (prev->str != NULL)
       free(prev->str);
+    if (prev->rep != NULL)
+      free(prev->rep);
     u = prev;
     prev = u->prev;
     free(u);
@@ -92,7 +95,7 @@ add_undo(buffer_t *b, undotype_t type, int32_t p, char_t *s, char_t *r)
 		up->point = p;
 		up->str = str_dup(s);
 		if (type == UNDO_REPLACE)
-			up->rep = (char_t *)str_dup(r);
+			up->rep = str_dup(r);
 	}
 }
 
