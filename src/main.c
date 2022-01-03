@@ -99,6 +99,12 @@ term_signal(int32_t n) {
     case SIGSEGV:
       die("SIGSEGV", n);
       break;
+    case SIGWINCH:
+      endwin();
+      refresh();
+      clear();
+      refresh();
+      break;
     default:
       die("UNKNOWN", n);
   }
@@ -131,3 +137,4 @@ fatal(char *msg) {
   fprintf(stderr, msg, "editor");
   exit(1);
 }
+

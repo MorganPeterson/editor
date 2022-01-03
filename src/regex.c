@@ -1,3 +1,7 @@
+/*
+ * regex.c, editor, Morgan Peterson, Public Domain, 2021
+ */
+
 #include "header.h"
 
 static char*
