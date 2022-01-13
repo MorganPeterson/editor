@@ -137,4 +137,3 @@ fatal(char *msg) {
   fprintf(stderr, msg, "editor");
   exit(1);
 }
-

@@ -21,7 +21,7 @@ char *C_HL_keywords[] = {
   "struct", "union", "typedef", "static", "enum", "class", "case", "NULL",
   "int|", "int32_t|", "int8_t|", "int64_t|", "long|", "double|", "float|",
   "char|", "unsigned|", "signed|", "void|", "#include|", "#define|", "auto",
-  "const", "short|", "defualt", "register", "sizeof|", "volatile|", "goto|",
+  "const", "short|", "default", "register", "sizeof|", "volatile|", "goto|",
   "do", "extern", NULL };
 
 char *JS_HL_keywords[] = {
@@ -87,7 +87,7 @@ static char_t symbols[] = "{}[]()";
 static int32_t
 is_separator(int c)
 {
-  return isspace(c) || c == '\0' || strchr(",.()+-/*=~%<>[];", c) != NULL;
+  return isspace(c) || c == '\0' || strchr(",.()+-/*=~%<>[];:{}", c) != NULL;
 }
 
 int32_t
@@ -127,7 +127,7 @@ parse_text(buffer_t *b, int32_t p)
   	if (now == NULL)
     	return state;
 
-  	if (state == HL_KEYWORD && is_separator(*now)) {
+  	if ((state == HL_KEYWORD || state == HL_KEYWORD2) && is_separator(*now)) {
     	next_state = state = HL_NORMAL;
   	}
 
@@ -210,7 +210,9 @@ parse_text(buffer_t *b, int32_t p)
 			if (kw2)
 				klen--;
 			if (!strncmp((char*)now, kyw[j], klen) && is_separator(*(now + klen))) {
-				return (next_state = HL_KEYWORD);
+				if (kw2)
+					return (next_state = HL_KEYWORD);
+				return (next_state = HL_KEYWORD2);
 			}
 		}
 	}

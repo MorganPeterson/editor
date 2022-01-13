@@ -24,9 +24,9 @@ enum {
 
 color_t colors[] = {
 	{"white", 255, "#EEEEEEE"},
-  {"offwhite", 252, "#d0d0d0"},
+	{"offwhite", 252, "#d0d0d0"},
 	{"darkred", 124, "#AF0000"},
-  {"green", 28, "#008700"},
+	{"green", 28, "#008700"},
 	{"olive", 64, "#5F8700"},
 	{"brightblue", 31, "#0087AF"},
 	{"darkgrey", 102, "#878787"},
@@ -43,15 +43,16 @@ color_t colors[] = {
 void
 init_colors(void)
 {
-  init_pair(HL_BACKGROUND, colors[BRIGHTBLUE].eightbit, colors[WHITE].eightbit);
-  init_pair(HL_NORMAL, colors[BLACK].eightbit, colors[WHITE].eightbit);
-  init_pair(HL_SYMBOL, colors[DARKBLUE].eightbit, colors[WHITE].eightbit);
-  init_pair(HL_NUMBER, colors[ORANGE].eightbit, colors[WHITE].eightbit);
-  init_pair(HL_DOUBLE_QUOTE, colors[OLIVE].eightbit, colors[WHITE].eightbit);
-  init_pair(HL_SINGLE_QUOTE, colors[GREEN].eightbit, colors[WHITE].eightbit);
-  init_pair(HL_COMMENT, colors[DARKGREY].eightbit, colors[WHITE].eightbit);
-  init_pair(HL_MLCOMMENT, colors[DARKGREY].eightbit, colors[WHITE].eightbit);
-  init_pair(HL_MODELINE, colors[NAVY].eightbit, colors[OFFWHITE].eightbit);
-  init_pair(HL_KEYWORD, colors[PINK].eightbit, colors[WHITE].eightbit);
+	init_pair(HL_BACKGROUND, colors[BRIGHTBLUE].eightbit, colors[WHITE].eightbit);
+	init_pair(HL_NORMAL, colors[BLACK].eightbit, colors[WHITE].eightbit);
+	init_pair(HL_SYMBOL, colors[DARKBLUE].eightbit, colors[WHITE].eightbit);
+	init_pair(HL_NUMBER, colors[ORANGE].eightbit, colors[WHITE].eightbit);
+	init_pair(HL_DOUBLE_QUOTE, colors[OLIVE].eightbit, colors[WHITE].eightbit);
+	init_pair(HL_SINGLE_QUOTE, colors[GREEN].eightbit, colors[WHITE].eightbit);
+	init_pair(HL_COMMENT, colors[DARKGREY].eightbit, colors[WHITE].eightbit);
+	init_pair(HL_MLCOMMENT, colors[DARKGREY].eightbit, colors[WHITE].eightbit);
+	init_pair(HL_MODELINE, colors[NAVY].eightbit, colors[OFFWHITE].eightbit);
+	init_pair(HL_KEYWORD, colors[PINK].eightbit, colors[WHITE].eightbit);
+	init_pair(HL_KEYWORD2, colors[DARKRED].eightbit, colors[WHITE].eightbit);
 }
 
