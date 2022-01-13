@@ -53,6 +53,5 @@ init_colors(void)
 	init_pair(HL_MLCOMMENT, colors[DARKGREY].eightbit, colors[WHITE].eightbit);
 	init_pair(HL_MODELINE, colors[NAVY].eightbit, colors[OFFWHITE].eightbit);
 	init_pair(HL_KEYWORD, colors[PINK].eightbit, colors[WHITE].eightbit);
-	init_pair(HL_KEYWORD2, colors[DARKRED].eightbit, colors[WHITE].eightbit);
+	init_pair(HL_KEYWORD2, colors[PURPLE].eightbit, colors[WHITE].eightbit);
 }
-
