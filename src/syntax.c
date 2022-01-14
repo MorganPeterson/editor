@@ -19,39 +19,40 @@ char *GO_HL_extensions[] = { ".go", NULL };
 char *SH_HL_extensions[] = { ".sh", NULL };
 
 char *C_HL_keywords[] = {
-  "switch", "if", "while", "for", "break", "continue", "return", "else",
-  "struct", "union", "typedef", "static", "enum", "class", "case", "NULL",
-  "int|", "int32_t|", "int8_t|", "int64_t|", "long|", "double|", "float|",
-  "char|", "unsigned|", "signed|", "void|", "#include|", "#define|", "auto",
-  "const", "short|", "default", "register", "sizeof|", "volatile|", "goto|",
-  "do", "extern", NULL};
+	"switch", "if", "while", "for", "break", "continue", "return", "else",
+	"struct", "union", "typedef", "static", "enum", "class", "case", "NULL",
+	"int|", "int32_t|", "int8_t|", "int64_t|", "long|", "double|", "float|",
+	"char|", "unsigned|", "signed|", "void|", "#include|", "#define|", "auto",
+	"const", "short|", "default", "register", "sizeof|", "volatile|", "goto|",
+	"do", "extern", NULL};
 
 char *JS_HL_keywords[] = {
-  "abstract", "async", "await", "boolean", "break", "byte", "case", "catch",
-  "char", "class", "const", "continue", "debugger", "default", "delete",
-  "do", "double", "else", "enum", "export", "extends", "false", "final",
-  "finally", "float", "for", "function", "get", "goto", "if", "implements",
-  "import", "in", "instanceof", "int", "interface", "let", "long", "native",
-  "new", "null", "of", "package", "private", "protected", "public", "return",
-  "set", "short", "static", "super", "switch", "synchronized", "this",
-  "throw", "throws", "transient", "true", "try", "typeof", "var", "void",
-  "volatile", "while", "with", "yield", NULL};
+	"abstract", "async", "await", "boolean", "break", "byte|", "case", "catch",
+	"char|", "class|", "const|", "continue", "debugger", "default", "delete",
+	"do", "double|", "else", "enum|", "export", "extends", "false", "final",
+	"finally", "float|", "for", "function", "get", "goto", "if", "implements",
+	"import", "in", "instanceof", "int|", "interface", "let|", "long|", "native",
+	"new", "null", "of", "package", "private", "protected", "public", "return",
+	"set", "short|", "static", "super", "switch", "synchronized", "this",
+	"throw", "throws", "transient", "true", "try", "typeof", "var|", "void|",
+	"volatile", "while", "with", "yield", NULL};
 
-char *GO_HL_keywords[] = {"break", "case", "chan", "const", "continue",
-  "default", "defer", "else", "fallthrough", "for", "func", "go", "goto", "if",
-  "import", "interface", "map", "package", "range", "return", "select", "struct",
-  "switch", "type", "var", "true", "false", "iota", "nil", "bool", "byte",
-  "complex64", "complex128", "error", "float32", "float64", "int", "int8",
-  "int16", "int32", "int64", "rune", "string", "uint", "uint8", "uint16",
-  "uint32", "uint64", "uintptr", "append", "cap", "close", "complex", "copy",
-  "delete", "imag", "len", "make", "new", "panic", "print", "println", "real",
-  "recover", NULL};
+char *GO_HL_keywords[] = {"break", "case", "chan|", "const|", "continue",
+	"default", "defer", "else", "fallthrough", "for", "func", "go", "goto", "if",
+	"import", "interface|", "map", "package", "range", "return", "select",
+	"struct|", "switch", "type", "var|", "true", "false", "iota", "nil", "bool|",
+	"byte|", "complex64|", "complex128|", "error", "float32|", "float64|", "int|",
+	"int8|", "int16|", "int32|", "int64|", "rune|", "string|", "uint|", "uint8|",
+	"uint16|", "uint32|", "uint64|", "uintptr|", "append", "cap", "close",
+	"complex", "copy", "delete", "imag", "len", "make", "new", "panic", "print",
+	"println", "real|", "recover", NULL};
 
 char *SH_HL_keywords[] = {"if", "then", "elif", "else", "fi", "case",
-  "in", "esac", "while", "for", "do", "done", "continue", "local", "return",
-  "select", "-a", "-b", "-c", "-d", "-e", "-f", "-g", "-h", "-k", "-p", "-r",
-  "-s", "-t", "-u", "-w", "-x", "-O", "-G", "-L", "-S", "-N", "-nt", "-ot",
-  "-ef", "-o", "-z", "-n", "-eq", "-ne", "-lt", "-le", "-gt", "-ge", NULL};
+	"in", "esac", "while", "for", "do", "done", "continue", "local", "return",
+	"select", "-a|", "-b|", "-c|", "-d|", "-e|", "-f|", "-g|", "-h|", "-k|",
+	"-p|", "-r|", "-s|", "-t|", "-u|", "-w|", "-x|", "-O|", "-G|", "-L|", "-S|",
+	"-N|", "-nt|", "-ot|", "-ef|", "-o|", "-z|", "-n|", "-eq|", "-ne|", "-lt|",
+	"-le|", "-gt|", "-ge|", NULL};
 
 syntax_t HLDB[] = {
   {
