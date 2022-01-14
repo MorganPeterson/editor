@@ -10,6 +10,8 @@ int32_t state = HL_NORMAL;
 int32_t next_state = HL_NORMAL;
 int32_t skip_count = 0;
 int32_t prev_sep = 1;
+int32_t syntax_row = 0;
+int32_t syntax_col = 0;
 
 char *C_HL_extensions[] = { ".c", ".h", ".cpp", NULL };
 char *JS_HL_extensions[] = { ".js", ".jsx", NULL };
@@ -224,13 +226,14 @@ parse_text(buffer_t *b, int32_t p)
 void
 set_parse_state(buffer_t * b, int32_t p)
 {
-  register int32_t po;
-  state = HL_NORMAL;
+	register int32_t po;
+	state = HL_NORMAL;
 	next_state = HL_NORMAL;
 	skip_count = 0;
 
-	for (po=0; po < p; po++)
+	for (po=0; po < p; po++) {
 		parse_text(b, po);
+	}
 }
 
 void

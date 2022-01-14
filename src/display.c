@@ -12,6 +12,8 @@ extern window_t *curwin;
 extern window_t *headwin;
 extern buffer_t *curbuf;
 
+int32_t ml_col = 0;
+
 int32_t
 line_start(buffer_t *b, int32_t offset)
 {
@@ -83,16 +85,19 @@ line_up(buffer_t *b, int32_t offset)
 static void
 modeline(window_t *w)
 {
-  int i;
+	int i;
 	char lch, mch;
 	static char modeline[256];
 
-  attron(COLOR_PAIR(HL_MODELINE));
+	int32_t current, last;
+	get_line_stats(&current, &last);
+
+	attron(COLOR_PAIR(HL_MODELINE));
 	move(w->top + w->rows, 0);
 	lch = (w == curwin ? '=' : '-');
 	mch = ((w->buf->flags & B_MODIFIED) ? '*' : lch);
 
-	sprintf(modeline, "%c%c mpe: %c%c %s ",  lch,mch,lch,lch, w->buf->buf_name);
+	sprintf(modeline, "%c%c mpe: %c%c %d:%d/%d %c%c %s ",  lch, mch, lch, lch, ml_col, current, last, lch, lch, w->buf->buf_name);
 	addstr(modeline);
 	for (i = strlen(modeline) + 1; i <= COLS; i++)
 		addch(lch);
@@ -157,9 +162,10 @@ display(window_t *w, int32_t flag)
   set_parse_state(b, b->page_end);
 
   while (1) {
-    if (b->point == b->page_end) {
-      b->row = i;
-      b->col = j;
+	if (b->point == b->page_end) {
+		b->row = i;
+		b->col = j;
+		ml_col = j + 1;
     }
     p = ptr(b, b->page_end);
     nch = 1;

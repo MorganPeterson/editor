@@ -246,6 +246,7 @@ void queryreplace(void);
 int32_t line_to_point(int32_t line);
 int32_t goto_line(int32_t line);
 void gotoline(void);
+void get_line_stats(int32_t *curline, int32_t *lastline);
 int32_t save(char_t *fn);
 int32_t get_input(char *prompt, char_t *buf, int32_t nbuf, int32_t flag);
 void writefile(void);

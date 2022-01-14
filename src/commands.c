@@ -396,7 +396,7 @@ cursorpos(void)
 void
 undocmd(void)
 {
-  int32_t continue_undo = 1;
+	int32_t continue_undo = 1;
 	undo_t *up = curbuf->undo;
 	curbuf->undo_cnt = -1;
 	char_t *input = NULL;
