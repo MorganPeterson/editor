@@ -1,10 +1,13 @@
 NAME=mpe
-CC=gcc
-FLAGS+=-O2 -std=c11 -pedantic -W -Wall -g
+CC=tcc
+FLAGS+=-O2 -std=c99 -pedantic -W -Wall -g
 
 OS:=$(shell uname -s)
+
+LIBS=-lncursesw
+
 ifeq ($(OS),Linux)
-	FLAGS+=-D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700 -lncursesw
+	FLAGS+=-D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700
 endif
 
 SRCD=src
@@ -161,7 +164,7 @@ $(TMO):$(TM)
 $(BIND)/$(NAME):$(MN)
 	@echo "building $(NAME)"
 	@mkdir -p $(@D)
-	@$(CC) $(FLAGS) -o $@ $< $(OBJS)
+	@$(CC) $(FLAGS) -o $@ $< $(OBJS) $(LIBS)
 
 clean:
 	@echo "cleaning workspace"

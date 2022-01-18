@@ -125,10 +125,28 @@ display_prompt_and_response(char *prompt, char *response)
 }
 
 static void
-display_character(buffer_t *b, char_t *p) {
-  int32_t token_type = parse_text(b, b->page_end);
+display_character(buffer_t *b, char_t *p)
+{
+	int32_t curpt = pos(b, p);
+	int32_t start = line_start(b, b->point);
+	int32_t end = segment_next(b, start, b->point)-1;
+	int32_t x,y;
+
+	int32_t token_type = parse_text(b, b->page_end);
 	attron(COLOR_PAIR(token_type));
-  addch(*p);
+
+	if (curpt >= start && curpt <= end)
+		attron(A_UNDERLINE | A_BOLD);
+	else
+		attroff(A_UNDERLINE | A_BOLD);
+
+	if (curpt == end) {
+		getyx(stdscr, y, x);
+		for (int32_t i = x; i < COLS-1; i++) {
+			addch(' ');
+		}
+	}
+	addch(*p);
 }
 
 void

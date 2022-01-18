@@ -62,6 +62,7 @@ enum {
 	HL_MODELINE,
 	HL_BACKGROUND,
 	HL_FOREGROUND,
+	HL_DIM,
 };
 
 typedef enum {

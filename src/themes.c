@@ -43,7 +43,7 @@ color_t colors[] = {
 void
 init_colors(void)
 {
-	init_pair(HL_BACKGROUND, colors[BRIGHTBLUE].eightbit, colors[WHITE].eightbit);
+	init_pair(HL_BACKGROUND, colors[BLACK].eightbit, colors[WHITE].eightbit);
 	init_pair(HL_NORMAL, colors[BLACK].eightbit, colors[WHITE].eightbit);
 	init_pair(HL_SYMBOL, colors[DARKBLUE].eightbit, colors[WHITE].eightbit);
 	init_pair(HL_NUMBER, colors[ORANGE].eightbit, colors[WHITE].eightbit);
@@ -54,4 +54,5 @@ init_colors(void)
 	init_pair(HL_MODELINE, colors[NAVY].eightbit, colors[OFFWHITE].eightbit);
 	init_pair(HL_KEYWORD, colors[PINK].eightbit, colors[WHITE].eightbit);
 	init_pair(HL_KEYWORD2, colors[PURPLE].eightbit, colors[WHITE].eightbit);
+	init_pair(HL_DIM, colors[BLACK].eightbit, colors[OFFWHITE].eightbit);
 }

@@ -126,10 +126,10 @@ linebegin(void)
 void
 lineend(void)
 {
-  /* do nothing if EOF */
-  if (curbuf->point == pos(curbuf, curbuf->buf_end))
-    return;
-  curbuf->point = line_down(curbuf, curbuf->point);
+	/* do nothing if EOF */
+	if (curbuf->point == pos(curbuf, curbuf->buf_end))
+		return;
+	curbuf->point = line_down(curbuf, curbuf->point);
 	int32_t p = curbuf->point;
 	left();
 	curbuf->point = (*ptr(curbuf, curbuf->point) == '\n') ? curbuf->point : p;
