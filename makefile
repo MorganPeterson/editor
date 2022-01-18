@@ -1,5 +1,5 @@
 NAME=mpe
-CC=tcc
+CC=cc
 FLAGS+=-O2 -std=c99 -pedantic -W -Wall -g
 
 OS:=$(shell uname -s)
