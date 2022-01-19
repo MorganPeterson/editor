@@ -1,4 +1,5 @@
 #include "header.h"
+#include "rgx.h"
 
 extern buffer_t *curbuf;
 

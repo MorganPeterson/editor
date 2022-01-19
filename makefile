@@ -1,6 +1,6 @@
 NAME=mpe
-CC=cc
-FLAGS+=-O2 -std=c99 -pedantic -W -Wall -g
+CC=clang
+FLAGS+=-O0 -std=c11 -pedantic -W -Wall -Wextra --extra-warnings -g
 
 OS:=$(shell uname -s)
 
@@ -24,7 +24,7 @@ P=complete
 C=commands
 D=display
 U=utf
-R=regex
+R=rgx
 H=search
 N=undo
 X=syntax

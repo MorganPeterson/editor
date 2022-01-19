@@ -9,14 +9,11 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <string.h>
 #include <locale.h>
 #include <signal.h>
 #include <ctype.h>
-#include <sys/stat.h>
 #include <curses.h>
-#include <regex.h>
 
 #define MAX_SIZE_T ((unsigned long) (size_t) ~0)
 #define EPOS ((int32_t)-1)
@@ -82,7 +79,7 @@ typedef struct buffer_t buffer_t;
 typedef struct strbuf_t strbuf_t;
 typedef struct window_t window_t;
 typedef struct keymap_t keymap_t;
-typedef struct Regex Regex;
+
 typedef struct filerange_t filerange_t;
 typedef struct undo_t undo_t;
 typedef struct syntax_t syntax_t;
@@ -115,10 +112,6 @@ struct undo_t {
   char_t *str;
   char_t *rep;
   char_t type;
-};
-
-struct Regex {
-  regex_t regex;
 };
 
 struct buffer_t {
@@ -190,9 +183,10 @@ char_t *read_file(char_t* file, int32_t *len);
 void strn_cpy(void *s1, void *s2, int32_t n);
 int32_t str_len(const char_t *s);
 int32_t str_str(const char_t *haystack, const char_t *needle);
+/*@null@*/
 char_t *str_dup(const char_t *src);
 int32_t strn_cmp(const char_t *s1, const char_t *s2, int32_t n);
-char_t *strn_cat(char_t *s1, char_t *s2, uint32_t n);
+void strn_cat(char_t*, const char_t*, uint32_t n);
 buffer_t *find_buffer(char_t *n, int32_t flag);
 void insert_string(buffer_t *w, char_t * s, int32_t len, int32_t flag);
 void make_buffer_name(char_t *bn, char_t *fn);
@@ -262,13 +256,13 @@ void disassociate_buffer(window_t *w);
 void associate_buffer_to_win(buffer_t *b, window_t *w);
 void buffer_init(strbuf_t *b);
 int32_t delete_buffer(buffer_t *b);
-int8_t buffer_append(strbuf_t *b, const char *c, size_t len);
-int8_t buffer_terminate(strbuf_t *b);
+bool buffer_append(strbuf_t *b, const char *c, size_t len);
+bool buffer_terminate(strbuf_t *b);
 int32_t count_buffers(void);
 void buffer_release(strbuf_t *b);
 char *buffer_move(strbuf_t *b);
-Regex* parse_regex(const char **s);
-void regex_free(Regex *r);
+
+
 int32_t search_forward(const char *str, filerange_t pmatch[], size_t mrange);
 int32_t search_backward(const char *str, filerange_t pmatch[], size_t mrange);
 undo_t *execute_undo(undo_t *u, char_t *input);

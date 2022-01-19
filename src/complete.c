@@ -4,6 +4,7 @@
  */
 
 #include "header.h"
+#include <unistd.h>
 
 /* basic filename completion, based on code in uemacs/PK */
 int32_t

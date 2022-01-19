@@ -3,6 +3,7 @@
  */
 
 #include "header.h"
+#include "rgx.h"
 
 static char*
 parse_until(const char **s, const char *until)

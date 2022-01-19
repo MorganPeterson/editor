@@ -142,6 +142,7 @@ display_character(buffer_t *b, char_t *p)
 
 	if (curpt == end) {
 		getyx(stdscr, y, x);
+		(void)y;
 		for (int32_t i = x; i < COLS-1; i++) {
 			addch(' ');
 		}

@@ -2,30 +2,25 @@
  * strutils.c, editor, Morgan Peterson, Public Domain, 2021
  */
 
-#include "header.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <locale.h>
+#include <signal.h>
+#include <ctype.h>
+#include <curses.h>
 
-#if GCC_VERSION>=5004000 || CLANG_VERSION>=4000000
-#define addu __builtin_add_overflow
-#else
-static inline bool
-addu(size_t a, size_t b, size_t *c)
-{
-	if (SIZE_MAX - a < b)
-		return false;
-	*c = a + b;
-	return true;
-}
-#endif
+#include "header.h"
 
 #define BUFFER_SIZE 1024
 
 void
 buffer_init(strbuf_t *b)
 {
-  memset(b, 0, sizeof(*b));
+  (void)memset(b, 0, sizeof(*b));
 }
 
-static int8_t
+static bool
 buffer_reserve(strbuf_t *b, size_t size)
 {
   /* ensure minimal buffer size, to avoid repeated realloc(3) calls */
@@ -34,47 +29,44 @@ buffer_reserve(strbuf_t *b, size_t size)
 	if (b->size < size) {
 		size = MAX(size, b->size*2);
 		char *data = realloc(b->data, size);
-		if (!data)
-			return 0;
+		if (data == NULL)
+			return false;
 		b->size = size;
 		b->data = data;
 	}
-	return 1;
+	return true;
 }
 
-static int8_t
+static bool
 buffer_grow(strbuf_t *b, size_t size)
 {
-  size_t len;
-  if (!addu(b->len, size, &len))
-    return 0;
-  return buffer_reserve(b, len);
+  return buffer_reserve(b, size);
 }
 
-static int8_t
+static bool
 buffer_insert(strbuf_t *b, size_t pos, const void *c, size_t len)
 {
 	if (pos > b->len)
-		return 0;
+		return false;
 	if (len == 0)
-		return 1;
+		return true;
 	if (!buffer_grow(b, len))
-		return 0;
+		return false;
 	size_t move = b->len - pos;
 	if (move > 0)
 		memmove(b->data + pos + len, b->data + pos, move);
 	memcpy(b->data + pos, c, len);
 	b->len += len;
-	return 1;
+	return true;
 }
 
-int8_t
+bool
 buffer_append(strbuf_t *b, const char *c, size_t len)
 {
   return buffer_insert(b, b->len, c, len);
 }
 
-int8_t
+bool
 buffer_terminate(strbuf_t *b)
 {
   return !b->data || b->len == 0 || b->data[b->len-1] == '\0' || buffer_append(b, "\0", 1);
@@ -101,8 +93,7 @@ int32_t
 str_len(const char_t *s)
 {
     int32_t count = 0;
-    while(*s!='\0')
-    {
+    while (*s != (char_t)'\0') {
         count++;
         s++;
     }
@@ -110,21 +101,24 @@ str_len(const char_t *s)
 }
 
 int32_t
-strn_cmp(const char_t *s1, const char_t *s2, int32_t n) {
-  int32_t i = 0;
-  while (s1[i] == s2[i]) {
-    if (i < n) {
-      if (s1[i] == '\0' || s2[i] == '\0')
-        break;
-      i++;
-    } else {
-      break;
-    }
-  }
-  if (s1[i] == '\0' || s2[i] == '\0')
-    return 0;
-  else
-    return -1;
+strn_cmp(const char_t *s1, const char_t *s2, int32_t n)
+{
+	int32_t i = 0;
+	char_t eol = (char_t)'\0';
+
+	while (s1[i] == s2[i]) {
+		if (i < n) {
+			if (s1[i] == eol || s2[i] == eol)
+				break;
+			i++;
+		} else {
+			break;
+		}
+	}
+	if (s1[i] == eol || s2[i] == eol)
+		return 0;
+	else
+		return -1;
 }
 
 void
@@ -137,16 +131,17 @@ strn_cpy(void *s1, void *s2, int32_t n) {
       break;
     *target = *source;
   }
-  *(--target) = '\0';
+  *(--target) = (char_t)'\0';
 }
 
-  char_t*
+/*@null@*/
+char_t*
 str_dup(const char_t *org)
 {
   if (org == NULL)
     return NULL;
 
-  int org_size;
+  int32_t org_size;
   char_t *dup;
   char_t *dup_offset;
 
@@ -154,41 +149,39 @@ str_dup(const char_t *org)
   org_size = str_len(org);
   dup = (char_t *)malloc(sizeof(char_t)*org_size+1);
   if( dup == NULL)
-    return( (char_t *)NULL);
+    return NULL;
 
   /* Copy string */
   dup_offset = dup;
-  while(*org)
+  while(*org != (char_t)'\0')
   {
     *dup_offset = *org;
     dup_offset++;
     org++;
   }
-  *dup_offset = '\0';
+  *dup_offset = (char_t)'\0';
 
   return dup;
 }
 
-char_t*
-strn_cat(char_t *s1, char_t *s2, uint32_t n)
+void
+strn_cat(char_t *s1, const char_t *s2, uint32_t n)
 {
-  if((s1 == NULL) && (s2 == NULL))
-    return NULL;
-  char_t *dest = s1;
-  /* find the end of destination */
-  while(*dest != '\0')
-  {
-    dest++;
-  }
-  while (n--)
-  {
-    if (!(*dest++ = *s2++))
-    {
-      return s1;
-    }
-  }
-  *dest = '\0';
-  return s1;
+	char_t eol = (char_t)'\0';
+
+	if((s1 == NULL) && (s2 == NULL))
+		return;
+	char_t *dest = s1;
+	/* find the end of destination */
+	while(*dest != eol) {
+    	dest++;
+	}
+	while (n-- > 0) {
+		if ((*dest++ = *s2++) == eol) {
+			return;
+		}
+	}
+	*dest = eol;
 }
 
 int32_t
@@ -197,10 +190,10 @@ str_str(const char_t *haystack, const char_t *needle)
     int32_t nTemp = 0;
     int32_t nStrLen = str_len(haystack);
     int32_t nStrSubLen = str_len(needle);
-    for(int i=0; i<nStrLen-nStrSubLen; i++)
+    for(int32_t i=0; i<nStrLen-nStrSubLen; i++)
     {
         nTemp = i;
-        for(int j=0; j<nStrSubLen; j++)
+        for(int32_t j=0; j<nStrSubLen; j++)
         {
 
             if(haystack[nTemp]==needle[j])

@@ -1,4 +1,5 @@
 #include "header.h"
+#include "rgx.h"
 
 extern buffer_t *curbuf;
 
@@ -48,7 +49,7 @@ search_forward(const char *str, filerange_t pmatch[], size_t mrange)
 int32_t
 search_backward(const char *str, filerange_t pmatch[], size_t mrange)
 {
-  int32_t eflags = REG_EXTENDED;
+	int32_t eflags = REG_EXTENDED;
   Regex *r = parse_regex(&str);
   (void)move_gap(curbuf, curbuf->point);
   int32_t pos = 0;
@@ -63,7 +64,7 @@ search_backward(const char *str, filerange_t pmatch[], size_t mrange)
 	regmatch_t match[1];
 	for (size_t junk = len; len > 0; len -= junk, pos += junk) {
 		char *next;
-		if (!regexec(&r->regex, cur, mrange, match, REG_EXTENDED)) {
+		if (!regexec(&r->regex, cur, mrange, match, eflags)) {
 			ret = 0;
 			for (size_t i = 0; i < mrange; i++) {
 				pmatch[i].start = match[i].rm_so == -1 ? EPOS : pos + match[i].rm_so - 1;

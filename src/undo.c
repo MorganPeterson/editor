@@ -37,12 +37,12 @@ append_undo_string(undo_t *up, char_t *str)
 		return;
 	}
 
-  /* undo string already exists, adjust memory and append str onto it */
+	/* undo string already exists, adjust memory and append str onto it */
 	buflen = strlen((char *)up->str);
 	newlen = buflen + len + 1;
-  newbuf = realloc(up->str, newlen * sizeof(char_t));
+	newbuf = realloc(up->str, newlen * sizeof(char_t));
 	up->str = newbuf;
-  strn_cat(up->str, str, len);
+	strn_cat(up->str, str, len);
 }
 
 void

@@ -242,8 +242,6 @@ select_syntax(buffer_t *b)
 {
 	int32_t j, is_ext;
   	b->syntax = NULL;
-  	if (b->file_name == NULL)
-    	return;
 
   	char *ext = strchr((char*)b->file_name, '.');
 

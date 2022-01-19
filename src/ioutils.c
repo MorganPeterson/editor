@@ -3,6 +3,7 @@
  */
 
 #include "header.h"
+#include <sys/stat.h>
 
 extern buffer_t *curbuf;
 
