@@ -32,10 +32,10 @@ parse_until(const char **s, const char *until)
       } else {
         int8_t delim = *(int8_t*)memchr(until, c, len);
         if (!delim)
-          buffer_append(&buf, "\\", 1);
+          buffer_append(&buf, '\\', 1);
       }
     }
-    if (!buffer_append(&buf, &c, 1)) {
+    if (!buffer_append(&buf, c, 1)) {
       buffer_release(&buf);
       return NULL;
     }

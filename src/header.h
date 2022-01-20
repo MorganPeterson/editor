@@ -256,7 +256,7 @@ void disassociate_buffer(window_t *w);
 void associate_buffer_to_win(buffer_t *b, window_t *w);
 void buffer_init(strbuf_t *b);
 int32_t delete_buffer(buffer_t *b);
-bool buffer_append(strbuf_t *b, const char *c, size_t len);
+bool buffer_append(strbuf_t *b, char c, size_t len);
 bool buffer_terminate(strbuf_t *b);
 int32_t count_buffers(void);
 void buffer_release(strbuf_t *b);

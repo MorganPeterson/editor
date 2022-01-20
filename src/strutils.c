@@ -23,17 +23,23 @@ buffer_init(strbuf_t *b)
 static bool
 buffer_reserve(strbuf_t *b, size_t size)
 {
-  /* ensure minimal buffer size, to avoid repeated realloc(3) calls */
-	if (size < BUFFER_SIZE)
-		size = BUFFER_SIZE;
-	if (b->size < size) {
-		size = MAX(size, b->size*2);
-		char *data = realloc(b->data, size);
-		if (data == NULL)
-			return false;
-		b->size = size;
-		b->data = data;
-	}
+	char *data = NULL;
+
+	size_t sze = MAX(size, (b->size*2)*sizeof(char));
+
+	/* ensure minimal buffer size, to avoid repeated realloc(3) calls */
+	if (sze < BUFFER_SIZE)
+		sze = BUFFER_SIZE;
+
+	if (b->size >= sze)
+		return false;
+
+	if ((data = (char*)realloc(b->data, sze)) == NULL)
+		return false;
+
+	b->size = sze;
+	b->data = data;
+
 	return true;
 }
 
@@ -44,7 +50,7 @@ buffer_grow(strbuf_t *b, size_t size)
 }
 
 static bool
-buffer_insert(strbuf_t *b, size_t pos, const void *c, size_t len)
+buffer_insert(strbuf_t *b, size_t pos, char c, size_t len)
 {
 	if (pos > b->len)
 		return false;
@@ -55,13 +61,13 @@ buffer_insert(strbuf_t *b, size_t pos, const void *c, size_t len)
 	size_t move = b->len - pos;
 	if (move > 0)
 		memmove(b->data + pos + len, b->data + pos, move);
-	memcpy(b->data + pos, c, len);
+	memcpy(b->data + pos, &c, len);
 	b->len += len;
 	return true;
 }
 
 bool
-buffer_append(strbuf_t *b, const char *c, size_t len)
+buffer_append(strbuf_t *b, char c, size_t len)
 {
   return buffer_insert(b, b->len, c, len);
 }
@@ -69,7 +75,7 @@ buffer_append(strbuf_t *b, const char *c, size_t len)
 bool
 buffer_terminate(strbuf_t *b)
 {
-  return !b->data || b->len == 0 || b->data[b->len-1] == '\0' || buffer_append(b, "\0", 1);
+  return !b->data || b->len == 0 || b->data[b->len-1] == '\0' || buffer_append(b, '\0', 1);
 }
 
 void
@@ -78,14 +84,14 @@ buffer_release(strbuf_t *b)
   if (!b)
     return;
   free(b->data);
-  buffer_init(b);
+  (void)memset(b, 0, sizeof(*b));
 }
 
 char*
 buffer_move(strbuf_t *b)
 {
 	char *data = b->data;
-	buffer_init(b);
+	(void)memset(b, 0, sizeof(*b));
 	return data;
 }
 
