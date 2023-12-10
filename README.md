@@ -1,3 +1,6 @@
+# NOTICE
+__I am moving this code to [Sourcehut](https://git.sr.ht/~nullevoid/editor) and archiving this repository. Any future development (if any) will be done in the new repository.__
+
 # M.P.'s Editor
 
 Morgan Peterson's Editor
